@@ -35,7 +35,7 @@ const menuItems = [
         name: "Lentil Sambusa",
         category: "Snacks",
         price: 40,
-        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&q=80&w=400",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&q=60&w=300",
         description: "Vegan-friendly pastry filled with spiced brown lentils.",
         isPopular: false
     },
@@ -53,7 +53,7 @@ const menuItems = [
         name: "Fruit Juice",
         category: "Drinks",
         price: 60,
-        image: "https://images.unsplash.com/photo-1536599424071-0b215a388ba7?auto=format&fit=crop&q=80&w=400",
+        image: "https://images.unsplash.com/photo-1536599424071-0b215a388ba7?auto=format&fit=crop&q=60&w=300",
         description: "Freshly squeezed seasonal fruit juice blend.",
         isPopular: false
     },
@@ -62,7 +62,7 @@ const menuItems = [
         name: "Baklava",
         category: "Desserts",
         price: 80,
-        image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&q=80&w=400",
+        image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&q=60&w=300",
         description: "Sweet pastry made of layers of filo filled with chopped nuts.",
         isPopular: true
     },
@@ -71,7 +71,7 @@ const menuItems = [
         name: "Vegetable Burger",
         category: "Food",
         price: 150,
-        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=80&w=400",
+        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=60&w=300",
         description: "House-made lentil patty with fresh veggies and special sauce.",
         isPopular: false
     }
@@ -137,11 +137,16 @@ function renderMenu(items) {
     items.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = `item-card bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-50 flex flex-col fade-in`;
-        card.style.animationDelay = `${index * 0.05}s`;
+        card.style.animationDelay = `${index * 0.03}s`;
 
         card.innerHTML = `
-            <div class="relative h-40 overflow-hidden">
-                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+            <div class="relative h-40 overflow-hidden img-placeholder">
+                <img src="${item.image}" 
+                     alt="${item.name}" 
+                     class="w-full h-full object-cover" 
+                     loading="lazy" 
+                     decoding="async"
+                     onload="this.classList.add('loaded')">
                 ${item.isPopular ? `
                     <div class="absolute top-3 left-3 bg-brand-secondary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-lg">
                         Popular
