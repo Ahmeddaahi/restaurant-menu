@@ -8,7 +8,7 @@ const menuItems = [
         name: "Traditional Buna",
         category: "Drinks",
         price: 45,
-        image: "traditional_buna_coffee_1776858587628.png",
+        image: "images/traditional_buna_coffee_1776858587628.png",
         description: "Freshly roasted Ethiopian coffee brewed in a clay pot (Jebena).",
         isPopular: true
     },
@@ -17,7 +17,7 @@ const menuItems = [
         name: "Beef Sambusa",
         category: "Snacks",
         price: 50,
-        image: "beef_sambusa_plate_1776858606059.png",
+        image: "images/beef_sambusa_plate_1776858606059.png",
         description: "Crispy pastry filled with spiced minced beef and green chili.",
         isPopular: true
     },
@@ -26,7 +26,7 @@ const menuItems = [
         name: "Injera Firfir",
         category: "Food",
         price: 125,
-        image: "injera_firfir_dish_1776858644046.png",
+        image: "images/injera_firfir_dish_1776858644046.png",
         description: "Torn injera pieces sautéed in berbere sauce and spices.",
         isPopular: false
     },
