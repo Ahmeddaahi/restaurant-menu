@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "name": "jua-cafe-qr-menu",
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    }
+  ]
+}
