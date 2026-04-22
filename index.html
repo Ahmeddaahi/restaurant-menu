@@ -43,6 +43,7 @@
         body {
             background-color: #fdfaf6;
             -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
         }
 
         /* Hide scrollbar for Chrome, Safari and Opera */
@@ -68,17 +69,19 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            background-color: rgba(253, 250, 246, 0.95);
-            backdrop-filter: blur(8px);
+            background-color: #fdfaf6;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transform: translateZ(0); /* Hardware acceleration */
         }
 
         .item-card {
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+            contain: layout style; /* Performance optimization */
+            transform: translateZ(0); /* Force GPU acceleration */
         }
 
         .item-card:active {
-            transform: scale(0.96);
+            transform: scale(0.96) translateZ(0);
         }
 
         @keyframes fadeIn {
@@ -112,6 +115,7 @@
         .item-card img {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
+            aspect-ratio: 1 / 1; /* Prevent layout shift */
         }
 
         .item-card img.loaded {
@@ -123,7 +127,7 @@
 <body class="text-brand-dark">
 
     <!-- Header -->
-    <header class="px-6 py-4 flex items-center justify-between bg-white shadow-sm sticky top-0 z-[60]">
+    <header class="px-6 py-4 flex items-center justify-between bg-white shadow-sm sticky top-0 z-[60] transform-gpu">
         <div class="flex items-center gap-2">
             <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -174,7 +178,7 @@
 
     <!-- Bottom Nav (Mobile Feel) -->
     <nav
-        class="fixed bottom-0 inset-x-0 bg-white/80 backdrop-blur-md border-t border-gray-100 px-6 py-3 flex justify-around items-center z-[100]">
+        class="fixed bottom-0 inset-x-0 bg-white/80 backdrop-blur-md border-t border-gray-100 px-6 py-3 flex justify-around items-center z-[100] transform-gpu">
         <div class="flex flex-col items-center gap-1 text-brand-primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">

@@ -117,9 +117,11 @@ function filterCategory(category) {
     
     renderMenu(filteredItems);
 
-    // Smooth scroll back to menu grid if scrolled down
-    const nav = document.getElementById('category-nav');
-    nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Only scroll if we are not at the top
+    if (window.scrollY > 200) {
+        const nav = document.getElementById('category-nav');
+        nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 /**
@@ -134,16 +136,18 @@ function renderMenu(items) {
         return;
     }
 
+    const fragment = document.createDocumentFragment();
+
     items.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = `item-card bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-50 flex flex-col fade-in`;
-        card.style.animationDelay = `${index * 0.03}s`;
+        card.style.animationDelay = `${index * 0.02}s`; // Faster stagger
 
         card.innerHTML = `
             <div class="relative h-40 overflow-hidden img-placeholder">
                 <img src="${item.image}" 
                      alt="${item.name}" 
-                     class="w-full h-full object-cover" 
+                     class="w-full h-full object-cover transform-gpu" 
                      loading="lazy" 
                      decoding="async"
                      onload="this.classList.add('loaded')">
@@ -167,8 +171,10 @@ function renderMenu(items) {
             </div>
         `;
         
-        grid.appendChild(card);
+        fragment.appendChild(card);
     });
+
+    grid.appendChild(fragment);
 }
 
 // Start the app
