@@ -44,7 +44,7 @@ const menuItems = [
         name: "Shahi (Spiced Tea)",
         category: "Drinks",
         price: 35,
-        image: "https://images.unsplash.com/photo-1544787210-2213d84ad960?auto=format&fit=crop&q=80&w=400",
+        image: "images/shahi_spiced_tea_1776859669091.png",
         description: "Black tea infused with cardamom, cinnamon, and cloves.",
         isPopular: false
     },
