@@ -18,6 +18,21 @@ const state = {
 };
 
 /**
+ * Unified language switching logic
+ */
+window.switchLanguage = (lang) => {
+    if (translator.getLanguage() === lang) return;
+    
+    translator.setLanguage(lang);
+    translator.updateStaticText();
+    translator.updateLanguageButtons();
+    updateSearchPlaceholder();
+    
+    renderCategories();
+    applyFilters();
+};
+
+/**
  * Initialize the App
  */
 function init() {
@@ -41,18 +56,6 @@ function init() {
     
     if (soBtn) soBtn.onclick = () => window.switchLanguage('so');
     if (enBtn) enBtn.onclick = () => window.switchLanguage('en');
-
-    window.switchLanguage = (lang) => {
-        if (translator.getLanguage() === lang) return;
-        
-        translator.setLanguage(lang);
-        translator.updateStaticText();
-        translator.updateLanguageButtons();
-        updateSearchPlaceholder();
-        
-        renderCategories();
-        applyFilters();
-    };
 }
 
 /**
@@ -155,6 +158,17 @@ function renderMenu(items, isSearching = false) {
     });
 
     grid.appendChild(fragment);
+
+    // Ensure cached images or fast-loading images trigger the 'loaded' state
+    grid.querySelectorAll('img').forEach(img => {
+        if (img.complete) {
+            img.parentElement.classList.add('loaded');
+        }
+        img.onerror = () => {
+            img.parentElement.classList.add('error');
+            img.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300'; // Fallback
+        };
+    });
 }
 
 // Start the app when DOM is ready
