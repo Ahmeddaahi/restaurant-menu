@@ -17,8 +17,14 @@ body {
 }
 
 /* Hide scrollbar */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
 /* Category Tabs */
 .category-tab {
@@ -39,7 +45,8 @@ body {
 /* Sticky Category Nav */
 .sticky-category {
     position: sticky;
-    top: 64px; /* Adjust based on header height */
+    top: 64px;
+    /* Adjust based on header height */
     z-index: 50;
     background-color: var(--bg-light);
     padding-top: 1rem;
@@ -66,9 +73,11 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 1; /* Default to visible */
+    opacity: 1;
+    /* Default to visible */
     transition: opacity 0.5s ease;
-    background-color: #f0f0f0; /* Fallback while loading */
+    background-color: #f0f0f0;
+    /* Fallback while loading */
 }
 
 .img-placeholder img {
@@ -79,7 +88,8 @@ body {
     background: #f0f0f0;
     position: relative;
     overflow: hidden;
-    padding-bottom: 75%; /* 4:3 Aspect Ratio fallback */
+    padding-bottom: 75%;
+    /* 4:3 Aspect Ratio fallback */
     height: 0;
 }
 
@@ -87,7 +97,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
     animation: skeleton-loading 1.5s infinite;
 }
 
@@ -96,8 +106,13 @@ body {
 }
 
 @keyframes skeleton-loading {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 /* Add to Cart Button */
@@ -121,6 +136,7 @@ body {
     .add-btn span {
         display: none;
     }
+
     .add-btn {
         padding: 8px;
         border-radius: 10px;
@@ -148,6 +164,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -163,6 +180,7 @@ body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -215,7 +233,7 @@ body {
     justify-content: center;
     color: #8E8E93;
     transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 10;
 }
 
@@ -228,9 +246,17 @@ body {
 }
 
 @keyframes heartBeat {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .favorite-btn.active svg {

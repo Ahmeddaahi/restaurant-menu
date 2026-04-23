@@ -156,7 +156,7 @@ export function createCartPage(cartItems, lang, translations, onUpdateQty, onRem
     // Event Delegation for dynamic items
     container.addEventListener('update-qty', (e) => onUpdateQty(e.detail.id, e.detail.delta));
     container.addEventListener('remove-item', (e) => onRemove(e.detail));
-    
+
     const backBtn = container.querySelector('#cart-back-btn');
     const backBtnHeader = container.querySelector('#header-back-btn');
     const backBtnEmpty = container.querySelector('#cart-back-btn-empty');
@@ -305,7 +305,7 @@ export function createFavoritesPage(favoriteItems, lang, translations, onToggleF
                 index,
                 translations,
                 onAddToCart,
-                () => {} 
+                () => { }
             );
             // Re-bind favorite toggle to refresh view
             const favBtn = card.querySelector('.favorite-btn');

@@ -17,7 +17,7 @@ class TranslationManager {
         this.currentLang = lang;
         try {
             localStorage.setItem('selectedLang', lang);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     getLanguage() {
@@ -36,7 +36,7 @@ class TranslationManager {
     updateStaticText() {
         const t = uiTranslations[this.currentLang];
         if (!t) return;
-        
+
         // Update Page Title
         const menuTitle = document.querySelector('[data-translate="menuTab"]');
         if (menuTitle) menuTitle.textContent = t.menuTab;
@@ -48,10 +48,10 @@ class TranslationManager {
     updateLanguageButtons() {
         const soBtn = document.getElementById('lang-so');
         const enBtn = document.getElementById('lang-en');
-        
+
         if (soBtn && enBtn) {
             const current = this.currentLang;
-            
+
             if (current === 'so') {
                 soBtn.classList.add('active');
                 enBtn.classList.remove('active');

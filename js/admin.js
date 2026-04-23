@@ -83,8 +83,8 @@ window.renderItemList = (items = state.menuData) => {
 
 window.filterAdminItems = () => {
     const q = document.getElementById('admin-search').value.toLowerCase();
-    const filtered = state.menuData.filter(item => 
-        item.name.en.toLowerCase().includes(q) || 
+    const filtered = state.menuData.filter(item =>
+        item.name.en.toLowerCase().includes(q) ||
         item.name.so.toLowerCase().includes(q)
     );
     renderItemList(filtered);
@@ -95,10 +95,10 @@ window.openModal = (id = null) => {
     const modal = document.getElementById('item-modal');
     const form = document.getElementById('item-form');
     const title = document.getElementById('modal-title');
-    
+
     form.reset();
     document.getElementById('edit-id').value = id || '';
-    
+
     if (id) {
         const item = state.menuData.find(i => i.id === id);
         title.textContent = 'Edit Item';
@@ -114,7 +114,7 @@ window.openModal = (id = null) => {
     } else {
         title.textContent = 'Add New Item';
     }
-    
+
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 };
@@ -128,7 +128,7 @@ window.closeModal = () => {
 window.saveItem = (e) => {
     e.preventDefault();
     const id = document.getElementById('edit-id').value;
-    
+
     const itemData = {
         id: id ? parseInt(id) : Date.now(),
         name: {

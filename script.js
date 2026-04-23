@@ -43,12 +43,12 @@ const state = {
  */
 window.switchLanguage = (lang) => {
     if (translator.getLanguage() === lang) return;
-    
+
     translator.setLanguage(lang);
     translator.updateStaticText();
     translator.updateLanguageButtons();
     updateSearchPlaceholder();
-    
+
     renderCurrentView();
 };
 
@@ -70,11 +70,11 @@ function init() {
             applyFilters();
         };
     }
-    
+
     // Language Switchers
     const soBtn = document.getElementById('lang-so');
     const enBtn = document.getElementById('lang-en');
-    
+
     if (soBtn) soBtn.onclick = () => window.switchLanguage('so');
     if (enBtn) enBtn.onclick = () => window.switchLanguage('en');
 
@@ -111,9 +111,9 @@ function renderCategories() {
     categories.forEach(cat => {
         const isActive = cat.id === state.activeCategory;
         const btn = createCategoryTab(
-            cat, 
-            currentLang, 
-            isActive, 
+            cat,
+            currentLang,
+            isActive,
             () => filterCategory(cat.id)
         );
         categoryList.appendChild(btn);
@@ -152,7 +152,7 @@ function applyFilters() {
 
     const filteredItems = menuData.filter(item => {
         const matchesCategory = activeCategory === "All" || item.category === activeCategory;
-        
+
         if (!searchTerm) return matchesCategory;
 
         const nameSo = item.name.so.toLowerCase();
@@ -160,10 +160,10 @@ function applyFilters() {
         const descSo = item.description.so.toLowerCase();
         const descEn = item.description.en.toLowerCase();
 
-        const matchesSearch = nameSo.includes(searchTerm) || 
-                            nameEn.includes(searchTerm) || 
-                            descSo.includes(searchTerm) || 
-                            descEn.includes(searchTerm);
+        const matchesSearch = nameSo.includes(searchTerm) ||
+            nameEn.includes(searchTerm) ||
+            descSo.includes(searchTerm) ||
+            descEn.includes(searchTerm);
 
         return matchesCategory && matchesSearch;
     });
@@ -194,9 +194,9 @@ function renderMenu(items, isSearching = false) {
         // Robust ID comparison (string vs number)
         const isFavorite = state.favorites.some(f => String(f.id) === String(item.id));
         const card = createItemCard(
-            { ...item, isFavorite }, 
-            currentLang, 
-            index, 
+            { ...item, isFavorite },
+            currentLang,
+            index,
             translations,
             (item) => addToCart(item),
             (item) => showView('details', item),
@@ -233,7 +233,7 @@ function addToCart(item) {
     } else {
         state.cart.push({ ...item, quantity: 1 });
     }
-    
+
     saveCart();
     updateCartBadge();
 }
@@ -277,7 +277,7 @@ function updateCartBadge() {
 function toggleFavorite(item) {
     // Robust search for item by ID
     const index = state.favorites.findIndex(f => String(f.id) === String(item.id));
-    
+
     if (index > -1) {
         state.favorites.splice(index, 1);
     } else {
@@ -285,13 +285,13 @@ function toggleFavorite(item) {
         const { id, name, price, image, category, rating, prepTime, description } = item;
         state.favorites.push({ id, name, price, image, category, rating, prepTime, description });
     }
-    
+
     try {
         localStorage.setItem('favorites', JSON.stringify(state.favorites));
     } catch (e) {
         console.error("Error saving favorites:", e);
     }
-    
+
     // Refresh current view if it's favorites
     if (state.currentView === 'favorites') {
         showView('favorites');
@@ -350,7 +350,7 @@ function renderCurrentView(data = null) {
         case 'cart':
             if (header) header.style.display = 'none';
             if (bottomNav) bottomNav.style.display = 'none';
-            
+
             const cartPage = document.createElement('div');
             cartPage.id = 'extra-view';
             cartPage.appendChild(createCartPage(
