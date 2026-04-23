@@ -198,7 +198,7 @@ function renderMenu(items, isSearching = false) {
             currentLang,
             index,
             translations,
-            (item) => addToCart(item),
+            (item, e) => addToCart(item, e),
             (item) => showView('details', item),
             (item) => toggleFavorite(item)
         );
@@ -226,7 +226,29 @@ function renderMenu(items, isSearching = false) {
 /**
  * Cart Management
  */
-function addToCart(item) {
+function addToCart(item, event) {
+    // If no event, just add (e.g. from programmatic call)
+    if (!event) {
+        processAddToCart(item);
+        return;
+    }
+
+    // Try to find the image to animate
+    let itemImage;
+    if (event.target.closest('.item-card')) {
+        itemImage = event.target.closest('.item-card').querySelector('img');
+    } else if (state.currentView === 'details') {
+        itemImage = document.querySelector('img.object-cover');
+    }
+
+    if (itemImage) {
+        animateFlyToCart(itemImage, () => processAddToCart(item));
+    } else {
+        processAddToCart(item);
+    }
+}
+
+function processAddToCart(item) {
     const existing = state.cart.find(i => i.id === item.id);
     if (existing) {
         existing.quantity += 1;
@@ -236,6 +258,54 @@ function addToCart(item) {
 
     saveCart();
     updateCartBadge();
+}
+
+/**
+ * Premium "Fly to Cart" Animation
+ */
+function animateFlyToCart(sourceImg, callback) {
+    const cartBtn = document.getElementById('cart-btn-main');
+    if (!cartBtn) {
+        callback();
+        return;
+    }
+
+    const imgRect = sourceImg.getBoundingClientRect();
+    const cartRect = cartBtn.getBoundingClientRect();
+
+    // Create a clone of the image
+    const clone = sourceImg.cloneNode();
+    clone.classList.add('flying-item');
+    
+    // Set initial position
+    clone.style.top = `${imgRect.top}px`;
+    clone.style.left = `${imgRect.left}px`;
+    clone.style.width = `${imgRect.width}px`;
+    clone.style.height = `${imgRect.height}px`;
+
+    document.body.appendChild(clone);
+
+    // Force reflow
+    clone.offsetWidth;
+
+    // Animate to cart
+    clone.style.top = `${cartRect.top + 5}px`;
+    clone.style.left = `${cartRect.left + 5}px`;
+    clone.style.width = '20px';
+    clone.style.height = '20px';
+    clone.style.opacity = '0.4';
+    clone.style.transform = 'scale(0.1)';
+
+    // Cleanup and trigger callback
+    clone.addEventListener('transitionend', () => {
+        clone.remove();
+        
+        // Add a small shake animation to the cart button
+        cartBtn.classList.add('cart-shake');
+        setTimeout(() => cartBtn.classList.remove('cart-shake'), 400);
+        
+        callback();
+    }, { once: true });
 }
 
 function updateCartQty(id, delta) {

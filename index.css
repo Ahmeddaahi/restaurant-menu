@@ -262,3 +262,25 @@ body {
 .favorite-btn.active svg {
     animation: heartBeat 0.3s ease-out;
 }
+
+/* Flying Item Animation */
+.flying-item {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes cart-shake {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.2) rotate(-10deg); }
+    50% { transform: scale(1.2) rotate(10deg); }
+    75% { transform: scale(1.2) rotate(-5deg); }
+}
+
+.cart-shake {
+    animation: cart-shake 0.4s ease-out;
+}

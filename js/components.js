@@ -54,7 +54,7 @@ export function createItemCard(item, lang, index, translations, onAddToCart, onS
     const addBtn = card.querySelector(`#add-${item.id}`);
     addBtn.onclick = (e) => {
         e.stopPropagation();
-        onAddToCart(item);
+        onAddToCart(item, e);
     };
 
     const favBtn = card.querySelector(`#fav-${item.id}`);
@@ -246,8 +246,8 @@ export function createItemDetailsPage(item, lang, translations, onAddToCart, onB
     `;
 
     container.querySelector('#details-back-btn').onclick = onBack;
-    container.querySelector('#details-add-btn').onclick = () => {
-        onAddToCart(item);
+    container.querySelector('#details-add-btn').onclick = (e) => {
+        onAddToCart(item, e);
         onBack();
     };
 
