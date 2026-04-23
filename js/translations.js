@@ -28,20 +28,9 @@ class TranslationManager {
     updateStaticText() {
         const t = uiTranslations[this.currentLang];
         
-        // Update Hero
-        const heroSubtitle = document.querySelector('section p');
-        if (heroSubtitle) heroSubtitle.textContent = t.heroSubtitle;
-        
-        const heroTitle = document.querySelector('section h2');
-        if (heroTitle) heroTitle.textContent = t.heroTitle;
-        
-        // Update Bottom Nav
-        const navItems = document.querySelectorAll('nav div span');
-        if (navItems.length >= 3) {
-            navItems[0].textContent = t.menuTab;
-            navItems[1].textContent = t.favoritesTab;
-            navItems[2].textContent = t.historyTab;
-        }
+        // Update Page Title
+        const menuTitle = document.querySelector('[data-translate="menuTab"]');
+        if (menuTitle) menuTitle.textContent = t.menuTab;
     }
 
     /**
@@ -61,11 +50,11 @@ class TranslationManager {
 
     _toggleBtnStyle(btn, active) {
         if (active) {
-            btn.classList.add('bg-brand-primary', 'text-white');
-            btn.classList.remove('bg-gray-100', 'text-gray-600');
+            btn.classList.add('bg-primary', 'text-white', 'shadow-sm');
+            btn.classList.remove('text-gray-500');
         } else {
-            btn.classList.add('bg-gray-100', 'text-gray-600');
-            btn.classList.remove('bg-brand-primary', 'text-white');
+            btn.classList.add('text-gray-500');
+            btn.classList.remove('bg-primary', 'text-white', 'shadow-sm');
         }
     }
 }

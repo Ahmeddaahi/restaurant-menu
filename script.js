@@ -6,10 +6,15 @@ import { menuItems, categories, uiTranslations } from './js/data.js';
 import { translator } from './js/translations.js';
 import { createItemCard, createCategoryTab } from './js/components.js';
 
+// Load data from localStorage or fallback to default
+const savedItems = localStorage.getItem('customMenuItems');
+const initialMenuItems = savedItems ? JSON.parse(savedItems) : menuItems;
+
 // Application State
 const state = {
     activeCategory: "All",
-    searchTerm: ""
+    searchTerm: "",
+    menuData: initialMenuItems
 };
 
 /**
@@ -17,31 +22,12 @@ const state = {
  */
 function init() {
     renderCategories();
-    renderMenu(menuItems);
+    renderMenu(state.menuData);
     translator.updateStaticText();
     translator.updateLanguageButtons();
     updateSearchPlaceholder();
 
-    // Attach search event listeners
-    const searchToggle = document.getElementById('search-toggle');
     const searchInput = document.getElementById('search-input');
-    const searchContainer = document.getElementById('search-bar-container');
-
-    if (searchToggle && searchContainer) {
-        searchToggle.onclick = () => {
-            searchContainer.classList.toggle('open');
-            searchToggle.classList.toggle('active');
-            if (searchContainer.classList.contains('open')) {
-                searchInput.focus();
-            } else {
-                // Clear search when closing? Optional, but usually better
-                state.searchTerm = "";
-                searchInput.value = "";
-                applyFilters();
-            }
-        };
-    }
-
     if (searchInput) {
         searchInput.oninput = (e) => {
             state.searchTerm = e.target.value.toLowerCase().trim();
@@ -49,7 +35,6 @@ function init() {
         };
     }
     
-    // Attach language switcher to window so it's accessible from HTML
     window.switchLanguage = (lang) => {
         if (translator.getLanguage() === lang) return;
         
@@ -114,9 +99,9 @@ function filterCategory(category) {
  * Unified filter logic for Category and Search
  */
 function applyFilters() {
-    const { activeCategory, searchTerm } = state;
+    const { activeCategory, searchTerm, menuData } = state;
 
-    const filteredItems = menuItems.filter(item => {
+    const filteredItems = menuData.filter(item => {
         const matchesCategory = activeCategory === "All" || item.category === activeCategory;
         
         if (!searchTerm) return matchesCategory;

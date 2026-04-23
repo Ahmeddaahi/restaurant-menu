@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Jua Café</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #FF4747;
+            --bg-light: #F8F9FA;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-light);
+        }
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 71, 71, 0.3);
+        }
+        .modal {
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-8 text-center">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Admin Login</h2>
+                <p class="mt-2 text-sm text-gray-600">Enter your password to manage the menu</p>
+            </div>
+            <div class="mt-8 space-y-4">
+                <input type="password" id="admin-password" 
+                    class="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    placeholder="Enter password...">
+                <button onclick="checkLogin()" class="w-full btn-primary py-4 rounded-2xl font-bold">Login</button>
+                <p id="login-error" class="text-red-500 text-xs hidden">Incorrect password. Please try again.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden">
+        <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
+            <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="text-gray-400 hover:text-primary transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+                    <h1 class="text-xl font-bold text-gray-900">Menu Management</h1>
+                </div>
+                <button onclick="logout()" class="text-sm text-gray-400 hover:text-red-500 font-medium">Logout</button>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto p-6 space-y-8">
+            <!-- Stats & Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="admin-card p-6 flex flex-col justify-center">
+                    <span class="text-gray-400 text-sm">Total Items</span>
+                    <span id="total-items" class="text-3xl font-bold text-gray-900">0</span>
+                </div>
+                <div class="admin-card p-6 flex flex-col justify-center">
+                    <span class="text-gray-400 text-sm">Categories</span>
+                    <span id="total-categories" class="text-3xl font-bold text-gray-900">0</span>
+                </div>
+                <button onclick="openModal()" class="admin-card p-6 bg-primary text-white flex items-center justify-center gap-3 hover:opacity-90 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span class="font-bold">Add New Item</span>
+                </button>
+            </div>
+
+            <!-- Item Table -->
+            <div class="admin-card overflow-hidden">
+                <div class="p-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <h3 class="font-bold text-gray-900">Current Menu</h3>
+                    <input type="text" id="admin-search" oninput="filterAdminItems()" 
+                        class="bg-gray-50 border-none rounded-xl px-4 py-2 text-sm w-full md:w-64 focus:ring-2 focus:ring-primary/20 outline-none"
+                        placeholder="Search items...">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-[11px] uppercase tracking-wider text-gray-500 font-bold">
+                            <tr>
+                                <th class="px-6 py-4">Item</th>
+                                <th class="px-6 py-4">Category</th>
+                                <th class="px-6 py-4">Price</th>
+                                <th class="px-6 py-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="item-list" class="divide-y divide-gray-50">
+                            <!-- Items will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit -->
+    <div id="item-modal" class="modal fixed inset-0 z-[100] hidden items-center justify-center p-6">
+        <div class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                <h3 id="modal-title" class="text-xl font-bold text-gray-900">Add New Item</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="item-form" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6" onsubmit="saveItem(event)">
+                <input type="hidden" id="edit-id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name (English)</label>
+                        <input type="text" id="name-en" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name (Somali)</label>
+                        <input type="text" id="name-so" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Price ($)</label>
+                            <input type="number" id="price" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Category</label>
+                            <select id="category" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                <!-- Categories will be injected -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Image URL</label>
+                        <input type="text" id="image-url" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="https://...">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Prep Time (min)</label>
+                            <input type="text" id="prep-time" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="10-15">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Rating</label>
+                            <input type="number" id="rating" step="0.1" max="5" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Description (English)</label>
+                        <textarea id="desc-en" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none h-20"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Description (Somali)</label>
+                        <textarea id="desc-so" required class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none h-20"></textarea>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 pt-4">
+                    <button type="submit" class="w-full btn-primary py-4 rounded-2xl font-bold">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

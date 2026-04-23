@@ -13,7 +13,9 @@ export const menuItems = [
             so: "Bun Itoobiyaan ah oo lagu kariyey dheriga dhoobada (Jebena).",
             en: "Freshly roasted Ethiopian coffee brewed in a clay pot (Jebena)."
         },
-        isPopular: true
+        isPopular: true,
+        rating: 4.8,
+        prepTime: "5-10"
     },
     {
         id: 2,
@@ -25,7 +27,9 @@ export const menuItems = [
             so: "Sambuus lagu soo buuxiyey hilib lo'aad oo la soo miiray iyo basbaas cagaaran.",
             en: "Crispy pastry filled with spiced minced beef and green chili."
         },
-        isPopular: true
+        isPopular: true,
+        rating: 4.6,
+        prepTime: "10-15"
     },
     {
         id: 3,
@@ -37,7 +41,9 @@ export const menuItems = [
             so: "Canjeero la googooyey oo lagu kariyey maraqa berbere iyo xawaash.",
             en: "Torn injera pieces sautéed in berbere sauce and spices."
         },
-        isPopular: false
+        isPopular: false,
+        rating: 4.7,
+        prepTime: "15-20"
     },
     {
         id: 4,
@@ -49,7 +55,9 @@ export const menuItems = [
             so: "Sambuus ku habboon dadka khudaarta cuna oo lagu buuxiyey misir basbaas leh.",
             en: "Vegan-friendly pastry filled with spiced brown lentils."
         },
-        isPopular: false
+        isPopular: false,
+        rating: 4.5,
+        prepTime: "10-15"
     },
     {
         id: 5,
@@ -61,7 +69,9 @@ export const menuItems = [
             so: "Shaah madow oo lagu daray hayl, qorfe, iyo qaranfuul.",
             en: "Black tea infused with cardamom, cinnamon, and cloves."
         },
-        isPopular: false
+        isPopular: false,
+        rating: 4.9,
+        prepTime: "5-8"
     },
     {
         id: 6,
@@ -73,7 +83,9 @@ export const menuItems = [
             so: "Casiir dabiici ah oo laga tuujiyey miro xilliyeed kala duwan.",
             en: "Freshly squeezed seasonal fruit juice blend."
         },
-        isPopular: false
+        isPopular: false,
+        rating: 4.7,
+        prepTime: "5-10"
     },
     {
         id: 7,
@@ -85,7 +97,9 @@ export const menuItems = [
             so: "Macmacaan ka samaysan lakabyo filo ah oo lagu buuxiyey nuts la jarjaray.",
             en: "Sweet pastry made of layers of filo filled with chopped nuts."
         },
-        isPopular: true
+        isPopular: true,
+        rating: 4.8,
+        prepTime: "5-10"
     },
     {
         id: 8,
@@ -97,7 +111,9 @@ export const menuItems = [
             so: "Burger ka samaysan misir, khudaar cusub iyo suugo gaar ah.",
             en: "House-made lentil patty with fresh veggies and special sauce."
         },
-        isPopular: false
+        isPopular: false,
+        rating: 4.4,
+        prepTime: "15-25"
     }
 ];
 
@@ -120,7 +136,9 @@ export const uiTranslations = {
         noItems: "Wax alaabo ah laguma helin qaybtan.",
         currency: "ETB",
         searchPlaceholder: "Raadi cunto ama cabitaan...",
-        searchNoResults: "Wax natiijo ah laguma helin raadintaada."
+        searchNoResults: "Wax natiijo ah laguma helin raadintaada.",
+        addToCart: "Ku dar",
+        min: "daqiiqo"
     },
     en: {
         heroSubtitle: "Authentic Hearth",
@@ -131,7 +149,9 @@ export const uiTranslations = {
         popularLabel: "Popular",
         noItems: "No items found in this category.",
         currency: "ETB",
-        searchPlaceholder: "Search food or drinks...",
-        searchNoResults: "No results found for your search."
+        searchPlaceholder: "Search dishes, restaurants...",
+        searchNoResults: "No results found for your search.",
+        addToCart: "Add to cart",
+        min: "min"
     }
 };

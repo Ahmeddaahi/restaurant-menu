@@ -27,12 +27,9 @@
                         sans: ['Outfit', 'sans-serif'],
                     },
                     colors: {
-                        brand: {
-                            primary: '#3E2723', // Deep Brown
-                            secondary: '#FF9800', // Warm Orange
-                            accent: '#F5F5DC', // Cream
-                            dark: '#1A0F0D',
-                        }
+                        primary: '#FF4747',
+                        secondary: '#8E8E93',
+                        surface: '#F8F9FA'
                     }
                 }
             }
@@ -42,107 +39,93 @@
     <link rel="stylesheet" href="index.css">
 </head>
 
-<body class="text-brand-dark">
+<body class="bg-[#F8F9FA]">
 
     <!-- Header -->
-    <header class="px-6 py-4 flex items-center justify-between bg-white shadow-sm sticky top-0 z-[60] transform-gpu">
+    <header class="px-6 py-5 flex items-center justify-between bg-[#F8F9FA] sticky top-0 z-[60]">
+        <!-- Restaurant Logo & Name -->
         <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
                 </svg>
             </div>
-            <h1 class="text-xl font-bold tracking-tight">Jua Café</h1>
+            <span class="font-bold text-gray-900 hidden sm:block">Sky Garden</span>
         </div>
 
-        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-full">
-            <button id="lang-so" onclick="switchLanguage('so')"
-                class="px-3 py-1 rounded-full text-xs font-bold transition-all">SO</button>
-            <button id="lang-en" onclick="switchLanguage('en')"
-                class="px-3 py-1 rounded-full text-xs font-bold transition-all">EN</button>
-        </div>
+        <h1 class="text-lg font-bold text-gray-900 absolute left-1/2 -translate-x-1/2" data-translate="menuTab">Menu</h1>
 
-        <button id="search-toggle" class="p-2 bg-gray-100 rounded-full transition-colors active:bg-gray-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-        </button>
+        <div class="flex items-center gap-3">
+            <div class="flex gap-1 bg-gray-200/50 p-1 rounded-xl">
+                <button id="lang-so" onclick="switchLanguage('so')" class="px-3 py-1 rounded-lg text-[10px] font-bold transition-all">SO</button>
+                <button id="lang-en" onclick="switchLanguage('en')" class="px-3 py-1 rounded-lg text-[10px] font-bold transition-all">EN</button>
+            </div>
+            
+            <div class="relative">
+                <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800 active:scale-90 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="cart-badge">3</span>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <!-- Search Bar Container -->
-    <div id="search-bar-container" class="px-6 py-2 bg-white shadow-sm overflow-hidden h-0 opacity-0 transition-all duration-300 ease-in-out">
-        <div class="relative flex items-center">
-            <input type="text" id="search-input" 
-                class="w-full bg-gray-100 border-none rounded-2xl py-3 pl-12 pr-4 text-sm focus:ring-2 focus:ring-brand-secondary outline-none transition-all"
-                placeholder="Search food or drinks...">
-            <div class="absolute left-4 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <main class="pb-20">
-        <!-- Hero Section -->
-        <section class="px-6 py-6">
-            <div class="relative h-48 rounded-3xl overflow-hidden shadow-xl">
-                <img src="images/cafe_hero_image_1776858412797.png" alt="Jua Café Hero"
-                    class="w-full h-full object-cover" fetchpriority="high" decoding="async">
-                <div
-                    class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6">
-                    <p class="text-brand-secondary font-semibold text-xs uppercase tracking-widest mb-1">Authentic
-                        Hearth</p>
-                    <h2 class="text-white text-2xl font-bold">Welcome to the Coffee Ceremony</h2>
+    <main class="pb-24">
+        <!-- Search Section -->
+        <section class="px-6 space-y-4">
+            <!-- Search Bar -->
+            <div class="relative flex items-center">
+                <input type="text" id="search-input" 
+                    class="w-full bg-white border-none rounded-2xl py-4 pl-12 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    placeholder="Search dishes, restaurants...">
+                <div class="absolute left-4 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                 </div>
             </div>
         </section>
 
         <!-- Categories -->
-        <section id="category-nav" class="sticky-category py-4">
+        <section id="category-nav" class="sticky-category">
             <div class="flex gap-3 overflow-x-auto px-6 no-scrollbar" id="category-list">
                 <!-- Categories will be injected here -->
             </div>
         </section>
 
         <!-- Menu Grid -->
-        <section class="px-6 mt-6">
-            <div class="grid grid-cols-2 gap-4" id="menu-grid">
+        <section class="px-6 mt-2">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-6" id="menu-grid">
                 <!-- Menu items will be injected here -->
             </div>
         </section>
     </main>
 
-    <!-- Bottom Nav (Mobile Feel) -->
-    <nav
-        class="fixed bottom-0 inset-x-0 bg-white/80 backdrop-blur-md border-t border-gray-100 px-6 py-3 flex justify-around items-center z-[100] transform-gpu">
-        <div class="flex flex-col items-center gap-1 text-brand-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-6 inset-x-6 h-16 bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-100 flex justify-around items-center z-[100]">
+        <div class="flex flex-col items-center gap-1 text-primary cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <span class="text-[10px] font-semibold">Menu</span>
         </div>
-        <div class="flex flex-col items-center gap-1 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        <div class="flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
-            <span class="text-[10px]">Favorites</span>
         </div>
-        <div class="flex flex-col items-center gap-1 text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div class="flex flex-col items-center gap-1 text-gray-400 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span class="text-[10px]">History</span>
         </div>
+        <a href="admin.html" class="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </a>
     </nav>
 
     <script type="module" src="script.js"></script>
