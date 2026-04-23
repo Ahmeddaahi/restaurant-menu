@@ -10,7 +10,7 @@ export function createItemCard(item, lang, index, translations) {
                  class="w-full h-full object-cover" 
                  loading="lazy" 
                  decoding="async"
-                 onload="this.style.opacity = 1">
+                 onload="this.parentElement.classList.add('loaded')">
         </div>
         <div class="p-3 flex flex-col flex-grow">
             <div class="flex items-center gap-2 mb-1">

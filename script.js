@@ -35,6 +35,13 @@ function init() {
         };
     }
     
+    // Language Switchers
+    const soBtn = document.getElementById('lang-so');
+    const enBtn = document.getElementById('lang-en');
+    
+    if (soBtn) soBtn.onclick = () => window.switchLanguage('so');
+    if (enBtn) enBtn.onclick = () => window.switchLanguage('en');
+
     window.switchLanguage = (lang) => {
         if (translator.getLanguage() === lang) return;
         
