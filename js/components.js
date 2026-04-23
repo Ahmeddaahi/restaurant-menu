@@ -40,7 +40,7 @@ export function createItemCard(item, lang, index, translations, onAddToCart, onS
             </div>
             <h3 class="font-bold text-gray-800 text-[13px] leading-tight mb-2 line-clamp-1">${item.name[lang]}</h3>
             <div class="flex items-center justify-between mt-auto">
-                <span class="text-gray-900 font-bold text-base">$${item.price}</span>
+                <span class="text-gray-900 font-bold text-base">${translations.currency} ${item.price}</span>
                 <button class="add-btn" id="add-${item.id}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -112,7 +112,7 @@ export function createCartPage(cartItems, lang, translations, onUpdateQty, onRem
                         </button>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="font-bold text-primary">$${item.price}</span>
+                        <span class="font-bold text-primary">${translations.currency} ${item.price}</span>
                         <div class="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                             <button class="w-6 h-6 flex items-center justify-center text-gray-500 font-bold" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: -1}}))">-</button>
                             <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
@@ -127,7 +127,7 @@ export function createCartPage(cartItems, lang, translations, onUpdateQty, onRem
             <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-4">
                     <span class="text-gray-500 font-medium">${translations.total}</span>
-                    <span class="text-2xl font-bold text-gray-900">$${total.toFixed(2)}</span>
+                    <span class="text-2xl font-bold text-gray-900">${translations.currency} ${total.toFixed(2)}</span>
                 </div>
                 <button class="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-primary/30 active:scale-95 transition-transform" id="checkout-btn">
                     ${translations.checkout}
@@ -223,7 +223,7 @@ export function createItemDetailsPage(item, lang, translations, onAddToCart, onB
                 </div>
                 <div class="text-right">
                     <span class="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Price</span>
-                    <span class="text-3xl font-bold text-gray-900">$${item.price}</span>
+                    <span class="text-3xl font-bold text-gray-900">${translations.currency} ${item.price}</span>
                 </div>
             </div>
 
