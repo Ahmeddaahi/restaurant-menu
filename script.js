@@ -160,15 +160,26 @@ function renderMenu(items, isSearching = false) {
     grid.appendChild(fragment);
 
     // Ensure cached images or fast-loading images trigger the 'loaded' state
-    grid.querySelectorAll('img').forEach(img => {
-        if (img.complete) {
-            img.parentElement.classList.add('loaded');
-        }
-        img.onerror = () => {
-            img.parentElement.classList.add('error');
-            img.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300'; // Fallback
-        };
-    });
+    // Use a small delay to ensure DOM is ready on older devices
+    setTimeout(() => {
+        grid.querySelectorAll('img').forEach(img => {
+            const handleLoad = () => {
+                img.parentElement.classList.add('loaded');
+            };
+
+            const handleError = () => {
+                img.parentElement.classList.add('loaded', 'error');
+                img.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300'; // Fallback
+            };
+
+            if (img.complete) {
+                handleLoad();
+            } else {
+                img.onload = handleLoad;
+                img.onerror = handleError;
+            }
+        });
+    }, 50);
 }
 
 // Start the app when DOM is ready

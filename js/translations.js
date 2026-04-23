@@ -6,12 +6,18 @@ import { uiTranslations } from './data.js';
 
 class TranslationManager {
     constructor() {
-        this.currentLang = localStorage.getItem('selectedLang') || 'so';
+        try {
+            this.currentLang = localStorage.getItem('selectedLang') || 'so';
+        } catch (e) {
+            this.currentLang = 'so';
+        }
     }
 
     setLanguage(lang) {
         this.currentLang = lang;
-        localStorage.setItem('selectedLang', lang);
+        try {
+            localStorage.setItem('selectedLang', lang);
+        } catch (e) {}
     }
 
     getLanguage() {
@@ -19,7 +25,9 @@ class TranslationManager {
     }
 
     translate(key) {
-        return uiTranslations[this.currentLang][key] || key;
+        const langData = uiTranslations[this.currentLang];
+        if (!langData) return key;
+        return langData[key] || key;
     }
 
     /**
@@ -27,6 +35,7 @@ class TranslationManager {
      */
     updateStaticText() {
         const t = uiTranslations[this.currentLang];
+        if (!t) return;
         
         // Update Page Title
         const menuTitle = document.querySelector('[data-translate="menuTab"]');
@@ -41,20 +50,15 @@ class TranslationManager {
         const enBtn = document.getElementById('lang-en');
         
         if (soBtn && enBtn) {
-            const isActive = (btnLang) => this.currentLang === btnLang;
+            const current = this.currentLang;
             
-            this._toggleBtnStyle(soBtn, isActive('so'));
-            this._toggleBtnStyle(enBtn, isActive('en'));
-        }
-    }
-
-    _toggleBtnStyle(btn, active) {
-        if (active) {
-            btn.classList.add('bg-primary', 'text-white', 'shadow-sm');
-            btn.classList.remove('text-gray-500');
-        } else {
-            btn.classList.add('text-gray-500');
-            btn.classList.remove('bg-primary', 'text-white', 'shadow-sm');
+            if (current === 'so') {
+                soBtn.classList.add('active');
+                enBtn.classList.remove('active');
+            } else {
+                enBtn.classList.add('active');
+                soBtn.classList.remove('active');
+            }
         }
     }
 }

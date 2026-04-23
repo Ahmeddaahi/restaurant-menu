@@ -28,7 +28,9 @@ body {
     white-space: nowrap;
 }
 
-.category-tab.active {
+.category-tab.active,
+#lang-so.active,
+#lang-en.active {
     background-color: var(--primary);
     color: white;
     box-shadow: 0 8px 20px rgba(255, 71, 71, 0.2);
@@ -64,11 +66,12 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
+    opacity: 1; /* Default to visible */
     transition: opacity 0.5s ease;
+    background-color: #f0f0f0; /* Fallback while loading */
 }
 
-.img-placeholder.loaded img {
+.img-placeholder img {
     opacity: 1;
 }
 
