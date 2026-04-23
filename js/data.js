@@ -138,7 +138,14 @@ export const uiTranslations = {
         searchPlaceholder: "Raadi cunto ama cabitaan...",
         searchNoResults: "Wax natiijo ah laguma helin raadintaada.",
         addToCart: "Ku dar",
-        min: "daqiiqo"
+        min: "daqiiqo",
+        cartTitle: "Gaarigaaga",
+        total: "Warta Guud",
+        checkout: "Dalbo",
+        emptyCart: "Gaarigaagu waa maran yahay",
+        back: "Dib u laabo",
+        items: "alaab",
+        confirmCheckout: "Ma hubaal inaad rabto inaad dalbato?"
     },
     en: {
         heroSubtitle: "Authentic Hearth",
@@ -152,6 +159,13 @@ export const uiTranslations = {
         searchPlaceholder: "Search dishes, restaurants...",
         searchNoResults: "No results found for your search.",
         addToCart: "Add to cart",
-        min: "min"
+        min: "min",
+        cartTitle: "Your Cart",
+        total: "Grand Total",
+        checkout: "Checkout",
+        emptyCart: "Your cart is empty",
+        back: "Back",
+        items: "items",
+        confirmCheckout: "Are you sure you want to checkout?"
     }
 };

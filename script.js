@@ -4,17 +4,38 @@
 
 import { menuItems, categories, uiTranslations } from './js/data.js';
 import { translator } from './js/translations.js';
-import { createItemCard, createCategoryTab } from './js/components.js';
+import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createFavoritesPage } from './js/components.js';
 
 // Load data from localStorage or fallback to default
 const savedItems = localStorage.getItem('customMenuItems');
 const initialMenuItems = savedItems ? JSON.parse(savedItems) : menuItems;
 
+// Load cart from localStorage
+const savedCart = localStorage.getItem('cart');
+const initialCart = savedCart ? JSON.parse(savedCart) : [];
+
+// Load favorites from localStorage with error handling
+let initialFavs = [];
+try {
+    const savedFavs = localStorage.getItem('favorites');
+    if (savedFavs) {
+        initialFavs = JSON.parse(savedFavs);
+        // Ensure it's an array
+        if (!Array.isArray(initialFavs)) initialFavs = [];
+    }
+} catch (e) {
+    console.error("Error loading favorites:", e);
+    initialFavs = [];
+}
+
 // Application State
 const state = {
     activeCategory: "All",
     searchTerm: "",
-    menuData: initialMenuItems
+    menuData: initialMenuItems,
+    cart: initialCart,
+    favorites: initialFavs,
+    currentView: 'menu' // 'menu', 'cart', 'details', 'favorites'
 };
 
 /**
@@ -28,20 +49,20 @@ window.switchLanguage = (lang) => {
     translator.updateLanguageButtons();
     updateSearchPlaceholder();
     
-    renderCategories();
-    applyFilters();
+    renderCurrentView();
 };
 
 /**
  * Initialize the App
  */
 function init() {
-    renderCategories();
-    renderMenu(state.menuData);
+    updateCartBadge();
+    renderCurrentView();
     translator.updateStaticText();
     translator.updateLanguageButtons();
     updateSearchPlaceholder();
 
+    // Search input listener
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
         searchInput.oninput = (e) => {
@@ -56,10 +77,29 @@ function init() {
     
     if (soBtn) soBtn.onclick = () => window.switchLanguage('so');
     if (enBtn) enBtn.onclick = () => window.switchLanguage('en');
+
+    // Cart Button in Header
+    const cartBtn = document.querySelector('button .cart-badge').parentElement;
+    if (cartBtn) {
+        cartBtn.onclick = () => showView('cart');
+    }
+
+    // Favorites Button in Footer
+    const footerFavBtn = document.querySelectorAll('nav.fixed.bottom-6 > div')[1];
+    if (footerFavBtn) {
+        footerFavBtn.onclick = () => showView('favorites');
+        footerFavBtn.classList.add('hover:text-primary', 'transition-colors');
+    }
+
+    // Home Button in Footer
+    const footerHomeBtn = document.querySelectorAll('nav.fixed.bottom-6 > div')[0];
+    if (footerHomeBtn) {
+        footerHomeBtn.onclick = () => showView('menu');
+    }
 }
 
 /**
- * Render Category Tabs
+ * Render Categories
  */
 function renderCategories() {
     const categoryList = document.getElementById('category-list');
@@ -81,7 +121,7 @@ function renderCategories() {
 }
 
 /**
- * Update Search Placeholder based on current language
+ * Update Search Placeholder
  */
 function updateSearchPlaceholder() {
     const searchInput = document.getElementById('search-input');
@@ -91,14 +131,13 @@ function updateSearchPlaceholder() {
 }
 
 /**
- * Filter Menu by Category
+ * Filter by Category
  */
 function filterCategory(category) {
     state.activeCategory = category;
     renderCategories();
     applyFilters();
 
-    // Scroll back to category nav if we've scrolled down
     if (window.scrollY > 200) {
         const nav = document.getElementById('category-nav');
         if (nav) nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -106,7 +145,7 @@ function filterCategory(category) {
 }
 
 /**
- * Unified filter logic for Category and Search
+ * Filter Logic
  */
 function applyFilters() {
     const { activeCategory, searchTerm, menuData } = state;
@@ -116,7 +155,6 @@ function applyFilters() {
         
         if (!searchTerm) return matchesCategory;
 
-        // Search in both Somali and English (Name and Description)
         const nameSo = item.name.so.toLowerCase();
         const nameEn = item.name.en.toLowerCase();
         const descSo = item.description.so.toLowerCase();
@@ -134,7 +172,7 @@ function applyFilters() {
 }
 
 /**
- * Render Menu Items
+ * Render Menu Grid
  */
 function renderMenu(items, isSearching = false) {
     const grid = document.getElementById('menu-grid');
@@ -153,33 +191,221 @@ function renderMenu(items, isSearching = false) {
     const fragment = document.createDocumentFragment();
 
     items.forEach((item, index) => {
-        const card = createItemCard(item, currentLang, index, translations);
+        // Robust ID comparison (string vs number)
+        const isFavorite = state.favorites.some(f => String(f.id) === String(item.id));
+        const card = createItemCard(
+            { ...item, isFavorite }, 
+            currentLang, 
+            index, 
+            translations,
+            (item) => addToCart(item),
+            (item) => showView('details', item),
+            (item) => toggleFavorite(item)
+        );
         fragment.appendChild(card);
     });
 
     grid.appendChild(fragment);
 
-    // Ensure cached images or fast-loading images trigger the 'loaded' state
-    // Use a small delay to ensure DOM is ready on older devices
+    // Image loading polish
     setTimeout(() => {
         grid.querySelectorAll('img').forEach(img => {
-            const handleLoad = () => {
-                img.parentElement.classList.add('loaded');
-            };
-
-            const handleError = () => {
-                img.parentElement.classList.add('loaded', 'error');
-                img.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300'; // Fallback
-            };
-
             if (img.complete) {
-                handleLoad();
+                img.parentElement.classList.add('loaded');
             } else {
-                img.onload = handleLoad;
-                img.onerror = handleError;
+                img.onload = () => img.parentElement.classList.add('loaded');
+                img.onerror = () => {
+                    img.parentElement.classList.add('loaded', 'error');
+                    img.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300';
+                };
             }
         });
     }, 50);
+}
+
+/**
+ * Cart Management
+ */
+function addToCart(item) {
+    const existing = state.cart.find(i => i.id === item.id);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        state.cart.push({ ...item, quantity: 1 });
+    }
+    
+    saveCart();
+    updateCartBadge();
+}
+
+function updateCartQty(id, delta) {
+    const item = state.cart.find(i => i.id === id);
+    if (item) {
+        item.quantity += delta;
+        if (item.quantity <= 0) {
+            state.cart = state.cart.filter(i => i.id !== id);
+        }
+    }
+    saveCart();
+    updateCartBadge();
+    if (state.currentView === 'cart') showView('cart');
+}
+
+function removeFromCart(id) {
+    state.cart = state.cart.filter(i => i.id !== id);
+    saveCart();
+    updateCartBadge();
+    if (state.currentView === 'cart') showView('cart');
+}
+
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(state.cart));
+}
+
+function updateCartBadge() {
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+        const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+}
+
+/**
+ * Favorite Management
+ */
+function toggleFavorite(item) {
+    // Robust search for item by ID
+    const index = state.favorites.findIndex(f => String(f.id) === String(item.id));
+    
+    if (index > -1) {
+        state.favorites.splice(index, 1);
+    } else {
+        // Only store essential data to save space
+        const { id, name, price, image, category, rating, prepTime, description } = item;
+        state.favorites.push({ id, name, price, image, category, rating, prepTime, description });
+    }
+    
+    try {
+        localStorage.setItem('favorites', JSON.stringify(state.favorites));
+    } catch (e) {
+        console.error("Error saving favorites:", e);
+    }
+    
+    // Refresh current view if it's favorites
+    if (state.currentView === 'favorites') {
+        showView('favorites');
+    }
+}
+
+/**
+ * View Management (Routing)
+ */
+function showView(view, data = null) {
+    state.currentView = view;
+    renderCurrentView(data);
+}
+
+function renderCurrentView(data = null) {
+    const main = document.querySelector('main');
+    const header = document.querySelector('header');
+    const searchSection = document.querySelector('section.px-6.space-y-4');
+    const categoryNav = document.getElementById('category-nav');
+    const menuSection = document.querySelector('section.px-6.mt-2');
+    const bottomNav = document.querySelector('nav.fixed.bottom-6');
+
+    // Reset visibility
+    if (searchSection) searchSection.style.display = 'none';
+    if (categoryNav) categoryNav.style.display = 'none';
+    if (menuSection) menuSection.style.display = 'none';
+    if (bottomNav) bottomNav.style.display = 'flex';
+    if (header) header.style.display = 'flex';
+
+    // Remove existing extra views
+    const extraView = document.getElementById('extra-view');
+    if (extraView) extraView.remove();
+
+    const currentLang = translator.getLanguage();
+    const translations = uiTranslations[currentLang];
+
+    // Update bottom nav active state
+    const footerIcons = document.querySelectorAll('nav.fixed.bottom-6 > div, nav.fixed.bottom-6 > a');
+    footerIcons.forEach(icon => icon.classList.remove('text-primary'));
+    footerIcons.forEach(icon => icon.classList.add('text-gray-400'));
+
+    switch (state.currentView) {
+        case 'menu':
+            if (footerIcons[0]) {
+                footerIcons[0].classList.add('text-primary');
+                footerIcons[0].classList.remove('text-gray-400');
+            }
+            if (searchSection) searchSection.style.display = 'block';
+            if (categoryNav) categoryNav.style.display = 'block';
+            if (menuSection) menuSection.style.display = 'block';
+            renderCategories();
+            applyFilters();
+            window.scrollTo(0, 0);
+            break;
+
+        case 'cart':
+            if (header) header.style.display = 'none';
+            if (bottomNav) bottomNav.style.display = 'none';
+            
+            const cartPage = document.createElement('div');
+            cartPage.id = 'extra-view';
+            cartPage.appendChild(createCartPage(
+                state.cart,
+                currentLang,
+                translations,
+                updateCartQty,
+                removeFromCart,
+                () => showView('menu'),
+                () => {
+                    if (confirm(translations.confirmCheckout)) {
+                        state.cart = [];
+                        saveCart();
+                        updateCartBadge();
+                        showView('menu');
+                        alert("Thank you for your order!");
+                    }
+                }
+            ));
+            main.parentElement.appendChild(cartPage);
+            break;
+
+        case 'details':
+            const detailsPage = createItemDetailsPage(
+                data,
+                currentLang,
+                translations,
+                addToCart,
+                () => showView('menu')
+            );
+            detailsPage.id = 'extra-view';
+            main.parentElement.appendChild(detailsPage);
+            break;
+
+        case 'favorites':
+            if (footerIcons[1]) {
+                footerIcons[1].classList.add('text-primary');
+                footerIcons[1].classList.remove('text-gray-400');
+            }
+            if (header) header.style.display = 'none';
+            if (bottomNav) bottomNav.style.display = 'none';
+
+            const favPage = document.createElement('div');
+            favPage.id = 'extra-view';
+            favPage.appendChild(createFavoritesPage(
+                state.favorites,
+                currentLang,
+                translations,
+                toggleFavorite,
+                addToCart,
+                () => showView('menu')
+            ));
+            main.parentElement.appendChild(favPage);
+            break;
+    }
 }
 
 // Start the app when DOM is ready
