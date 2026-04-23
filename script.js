@@ -1,84 +1,16 @@
 /**
- * Jua Café - Menu Data & Logic
+ * Jua Café - Main Application Logic (Controller)
  */
 
-const menuItems = [
-    {
-        id: 1,
-        name: "Traditional Buna",
-        category: "Drinks",
-        price: 45,
-        image: "images/traditional_buna_coffee_1776858587628.png",
-        description: "Freshly roasted Ethiopian coffee brewed in a clay pot (Jebena).",
-        isPopular: true
-    },
-    {
-        id: 2,
-        name: "Beef Sambusa",
-        category: "Snacks",
-        price: 50,
-        image: "images/beef_sambusa_plate_1776858606059.png",
-        description: "Crispy pastry filled with spiced minced beef and green chili.",
-        isPopular: true
-    },
-    {
-        id: 3,
-        name: "Injera Firfir",
-        category: "Food",
-        price: 125,
-        image: "images/injera_firfir_dish_1776858644046.png",
-        description: "Torn injera pieces sautéed in berbere sauce and spices.",
-        isPopular: false
-    },
-    {
-        id: 4,
-        name: "Lentil Sambusa",
-        category: "Snacks",
-        price: 40,
-        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&q=60&w=300",
-        description: "Vegan-friendly pastry filled with spiced brown lentils.",
-        isPopular: false
-    },
-    {
-        id: 5,
-        name: "Shahi (Spiced Tea)",
-        category: "Drinks",
-        price: 35,
-        image: "images/shahi_spiced_tea_1776859669091.png",
-        description: "Black tea infused with cardamom, cinnamon, and cloves.",
-        isPopular: false
-    },
-    {
-        id: 6,
-        name: "Fruit Juice",
-        category: "Drinks",
-        price: 60,
-        image: "https://images.unsplash.com/photo-1536599424071-0b215a388ba7?auto=format&fit=crop&q=60&w=300",
-        description: "Freshly squeezed seasonal fruit juice blend.",
-        isPopular: false
-    },
-    {
-        id: 7,
-        name: "Baklava",
-        category: "Desserts",
-        price: 80,
-        image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&q=60&w=300",
-        description: "Sweet pastry made of layers of filo filled with chopped nuts.",
-        isPopular: true
-    },
-    {
-        id: 8,
-        name: "Vegetable Burger",
-        category: "Food",
-        price: 150,
-        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&q=60&w=300",
-        description: "House-made lentil patty with fresh veggies and special sauce.",
-        isPopular: false
-    }
-];
+import { menuItems, categories, uiTranslations } from './js/data.js';
+import { translator } from './js/translations.js';
+import { createItemCard, createCategoryTab } from './js/components.js';
 
-const categories = ["All", "Drinks", "Food", "Snacks", "Desserts"];
-let activeCategory = "All";
+// Application State
+const state = {
+    activeCategory: "All",
+    searchTerm: ""
+};
 
 /**
  * Initialize the App
@@ -86,6 +18,49 @@ let activeCategory = "All";
 function init() {
     renderCategories();
     renderMenu(menuItems);
+    translator.updateStaticText();
+    translator.updateLanguageButtons();
+    updateSearchPlaceholder();
+
+    // Attach search event listeners
+    const searchToggle = document.getElementById('search-toggle');
+    const searchInput = document.getElementById('search-input');
+    const searchContainer = document.getElementById('search-bar-container');
+
+    if (searchToggle && searchContainer) {
+        searchToggle.onclick = () => {
+            searchContainer.classList.toggle('open');
+            searchToggle.classList.toggle('active');
+            if (searchContainer.classList.contains('open')) {
+                searchInput.focus();
+            } else {
+                // Clear search when closing? Optional, but usually better
+                state.searchTerm = "";
+                searchInput.value = "";
+                applyFilters();
+            }
+        };
+    }
+
+    if (searchInput) {
+        searchInput.oninput = (e) => {
+            state.searchTerm = e.target.value.toLowerCase().trim();
+            applyFilters();
+        };
+    }
+    
+    // Attach language switcher to window so it's accessible from HTML
+    window.switchLanguage = (lang) => {
+        if (translator.getLanguage() === lang) return;
+        
+        translator.setLanguage(lang);
+        translator.updateStaticText();
+        translator.updateLanguageButtons();
+        updateSearchPlaceholder();
+        
+        renderCategories();
+        applyFilters();
+    };
 }
 
 /**
@@ -93,89 +68,102 @@ function init() {
  */
 function renderCategories() {
     const categoryList = document.getElementById('category-list');
-    categoryList.innerHTML = '';
+    if (!categoryList) return;
 
-    categories.forEach(category => {
-        const btn = document.createElement('button');
-        btn.className = `category-tab flex-shrink-0 px-6 py-2 rounded-full text-sm font-medium transition-all ${category === activeCategory ? 'active' : 'bg-white border border-gray-100'}`;
-        btn.textContent = category;
-        btn.onclick = () => filterCategory(category);
+    categoryList.innerHTML = '';
+    const currentLang = translator.getLanguage();
+
+    categories.forEach(cat => {
+        const isActive = cat.id === state.activeCategory;
+        const btn = createCategoryTab(
+            cat, 
+            currentLang, 
+            isActive, 
+            () => filterCategory(cat.id)
+        );
         categoryList.appendChild(btn);
     });
+}
+
+/**
+ * Update Search Placeholder based on current language
+ */
+function updateSearchPlaceholder() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.placeholder = translator.translate('searchPlaceholder');
+    }
 }
 
 /**
  * Filter Menu by Category
  */
 function filterCategory(category) {
-    activeCategory = category;
+    state.activeCategory = category;
     renderCategories();
+    applyFilters();
 
-    const filteredItems = category === "All" 
-        ? menuItems 
-        : menuItems.filter(item => item.category === category);
-    
-    renderMenu(filteredItems);
-
-    // Only scroll if we are not at the top
+    // Scroll back to category nav if we've scrolled down
     if (window.scrollY > 200) {
         const nav = document.getElementById('category-nav');
-        nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (nav) nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+}
+
+/**
+ * Unified filter logic for Category and Search
+ */
+function applyFilters() {
+    const { activeCategory, searchTerm } = state;
+
+    const filteredItems = menuItems.filter(item => {
+        const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+        
+        if (!searchTerm) return matchesCategory;
+
+        // Search in both Somali and English (Name and Description)
+        const nameSo = item.name.so.toLowerCase();
+        const nameEn = item.name.en.toLowerCase();
+        const descSo = item.description.so.toLowerCase();
+        const descEn = item.description.en.toLowerCase();
+
+        const matchesSearch = nameSo.includes(searchTerm) || 
+                            nameEn.includes(searchTerm) || 
+                            descSo.includes(searchTerm) || 
+                            descEn.includes(searchTerm);
+
+        return matchesCategory && matchesSearch;
+    });
+
+    renderMenu(filteredItems, searchTerm !== "");
 }
 
 /**
  * Render Menu Items
  */
-function renderMenu(items) {
+function renderMenu(items, isSearching = false) {
     const grid = document.getElementById('menu-grid');
+    if (!grid) return;
+
     grid.innerHTML = '';
+    const currentLang = translator.getLanguage();
+    const translations = uiTranslations[currentLang];
 
     if (items.length === 0) {
-        grid.innerHTML = '<p class="col-span-2 text-center text-gray-400 py-10">No items found in this category.</p>';
+        const emptyMessage = isSearching ? translations.searchNoResults : translations.noItems;
+        grid.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-10 fade-in">${emptyMessage}</p>`;
         return;
     }
 
     const fragment = document.createDocumentFragment();
 
     items.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = `item-card bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-50 flex flex-col fade-in`;
-        card.style.animationDelay = `${index * 0.02}s`; // Faster stagger
-
-        card.innerHTML = `
-            <div class="relative h-40 overflow-hidden img-placeholder">
-                <img src="${item.image}" 
-                     alt="${item.name}" 
-                     class="w-full h-full object-cover transform-gpu" 
-                     loading="lazy" 
-                     decoding="async"
-                     onload="this.classList.add('loaded')">
-                ${item.isPopular ? `
-                    <div class="absolute top-3 left-3 bg-brand-secondary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                        Popular
-                    </div>
-                ` : ''}
-                <button class="absolute bottom-3 right-3 w-8 h-8 bg-brand-primary/90 backdrop-blur-sm text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                </button>
-            </div>
-            <div class="p-4 flex flex-col flex-grow">
-                <h3 class="font-bold text-gray-800 text-sm leading-tight mb-1">${item.name}</h3>
-                <p class="text-gray-400 text-[11px] leading-snug flex-grow mb-2 line-clamp-2">${item.description}</p>
-                <div class="flex items-center justify-between mt-auto">
-                    <span class="text-brand-primary font-bold text-sm">${item.price} <span class="text-[10px] text-gray-400 font-normal">ETB</span></span>
-                </div>
-            </div>
-        `;
-        
+        const card = createItemCard(item, currentLang, index, translations);
         fragment.appendChild(card);
     });
 
     grid.appendChild(fragment);
 }
 
-// Start the app
+// Start the app when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
