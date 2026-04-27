@@ -387,6 +387,7 @@ function renderCurrentView(data = null) {
 
     // Reset visibility
     if (header) header.style.display = 'flex';
+    if (main) main.style.display = 'block';
     if (heroSection) heroSection.style.display = 'block';
     if (searchSection) searchSection.style.display = 'block';
     if (categoryNav) categoryNav.style.display = 'block';
@@ -421,10 +422,7 @@ function renderCurrentView(data = null) {
 
         case 'cart':
             if (header) header.style.display = 'none';
-            if (heroSection) heroSection.style.display = 'none';
-            if (searchSection) searchSection.style.display = 'none';
-            if (categoryNav) categoryNav.style.display = 'none';
-            if (menuSection) menuSection.style.display = 'none';
+            if (main) main.style.display = 'none';
             if (bottomNav) bottomNav.style.display = 'none';
 
             const cartPage = document.createElement('div');
@@ -450,10 +448,7 @@ function renderCurrentView(data = null) {
             break;
 
         case 'details':
-            if (heroSection) heroSection.style.display = 'none';
-            if (searchSection) searchSection.style.display = 'none';
-            if (categoryNav) categoryNav.style.display = 'none';
-            if (menuSection) menuSection.style.display = 'none';
+            if (main) main.style.display = 'none';
             const detailsPage = createItemDetailsPage(
                 data,
                 currentLang,
@@ -471,10 +466,7 @@ function renderCurrentView(data = null) {
                 footerIcons[1].classList.remove('text-gray-400');
             }
             if (header) header.style.display = 'none';
-            if (heroSection) heroSection.style.display = 'none';
-            if (searchSection) searchSection.style.display = 'none';
-            if (categoryNav) categoryNav.style.display = 'none';
-            if (menuSection) menuSection.style.display = 'none';
+            if (main) main.style.display = 'none';
 
             const aboutPage = document.createElement('div');
             aboutPage.id = 'extra-view';
