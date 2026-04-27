@@ -48,14 +48,14 @@ body {
 /* Sticky Navigation */
 .sticky-search {
     position: sticky;
-    top: 128px;
+    top: 72px;
     background-color: var(--bg-light);
     z-index: 55;
 }
 
 .sticky-category {
     position: sticky;
-    top: 184px;
+    top: 130px;
     /* Adjust based on header height */
     z-index: 50;
     background-color: var(--bg-light);
