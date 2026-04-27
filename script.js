@@ -4,7 +4,7 @@
 
 import { menuItems, categories, uiTranslations } from './js/data.js';
 import { translator } from './js/translations.js';
-import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createFavoritesPage } from './js/components.js';
+import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage } from './js/components.js';
 
 // Load data from localStorage or fallback to default
 const savedItems = localStorage.getItem('customMenuItems');
@@ -35,7 +35,7 @@ const state = {
     menuData: initialMenuItems,
     cart: initialCart,
     favorites: initialFavs,
-    currentView: 'menu' // 'menu', 'cart', 'details', 'favorites'
+    currentView: 'menu' // 'menu', 'cart', 'details', 'about'
 };
 
 /**
@@ -84,11 +84,11 @@ function init() {
         cartBtn.onclick = () => showView('cart');
     }
 
-    // Favorites Button in Footer
-    const footerFavBtn = document.querySelectorAll('nav.fixed.bottom-6 > div')[1];
-    if (footerFavBtn) {
-        footerFavBtn.onclick = () => showView('favorites');
-        footerFavBtn.classList.add('hover:text-primary', 'transition-colors');
+    // About Button in Footer (replaces Favorites and History)
+    const footerAboutBtn = document.querySelectorAll('nav.fixed.bottom-6 > div')[1];
+    if (footerAboutBtn) {
+        footerAboutBtn.onclick = () => showView('about');
+        footerAboutBtn.classList.add('hover:text-primary', 'transition-colors');
     }
 
     // Home Button in Footer
@@ -379,17 +379,19 @@ function showView(view, data = null) {
 function renderCurrentView(data = null) {
     const main = document.querySelector('main');
     const header = document.querySelector('header');
-    const searchSection = document.querySelector('section.px-6.space-y-4');
+    const heroSection = document.getElementById('hero-section');
+    const searchSection = document.getElementById('search-section');
     const categoryNav = document.getElementById('category-nav');
     const menuSection = document.querySelector('section.px-6.mt-2');
     const bottomNav = document.querySelector('nav.fixed.bottom-6');
 
     // Reset visibility
-    if (searchSection) searchSection.style.display = 'none';
-    if (categoryNav) categoryNav.style.display = 'none';
-    if (menuSection) menuSection.style.display = 'none';
-    if (bottomNav) bottomNav.style.display = 'flex';
     if (header) header.style.display = 'flex';
+    if (heroSection) heroSection.style.display = 'block';
+    if (searchSection) searchSection.style.display = 'block';
+    if (categoryNav) categoryNav.style.display = 'block';
+    if (menuSection) menuSection.style.display = 'block';
+    if (bottomNav) bottomNav.style.display = 'flex';
 
     // Remove existing extra views
     const extraView = document.getElementById('extra-view');
@@ -419,6 +421,10 @@ function renderCurrentView(data = null) {
 
         case 'cart':
             if (header) header.style.display = 'none';
+            if (heroSection) heroSection.style.display = 'none';
+            if (searchSection) searchSection.style.display = 'none';
+            if (categoryNav) categoryNav.style.display = 'none';
+            if (menuSection) menuSection.style.display = 'none';
             if (bottomNav) bottomNav.style.display = 'none';
 
             const cartPage = document.createElement('div');
@@ -444,6 +450,10 @@ function renderCurrentView(data = null) {
             break;
 
         case 'details':
+            if (heroSection) heroSection.style.display = 'none';
+            if (searchSection) searchSection.style.display = 'none';
+            if (categoryNav) categoryNav.style.display = 'none';
+            if (menuSection) menuSection.style.display = 'none';
             const detailsPage = createItemDetailsPage(
                 data,
                 currentLang,
@@ -455,25 +465,25 @@ function renderCurrentView(data = null) {
             main.parentElement.appendChild(detailsPage);
             break;
 
-        case 'favorites':
+        case 'about':
             if (footerIcons[1]) {
                 footerIcons[1].classList.add('text-primary');
                 footerIcons[1].classList.remove('text-gray-400');
             }
             if (header) header.style.display = 'none';
-            if (bottomNav) bottomNav.style.display = 'none';
-
-            const favPage = document.createElement('div');
-            favPage.id = 'extra-view';
-            favPage.appendChild(createFavoritesPage(
-                state.favorites,
+            if (heroSection) heroSection.style.display = 'none';
+            if (searchSection) searchSection.style.display = 'none';
+            if (categoryNav) categoryNav.style.display = 'none';
+            if (menuSection) menuSection.style.display = 'none';
+            
+            const aboutPage = document.createElement('div');
+            aboutPage.id = 'extra-view';
+            aboutPage.appendChild(createAboutPage(
                 currentLang,
                 translations,
-                toggleFavorite,
-                addToCart,
                 () => showView('menu')
             ));
-            main.parentElement.appendChild(favPage);
+            main.parentElement.appendChild(aboutPage);
             break;
     }
 }

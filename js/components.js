@@ -327,3 +327,110 @@ export function createFavoritesPage(favoriteItems, lang, translations, onToggleF
 
     return container;
 }
+
+export function createAboutPage(lang, translations, onBack) {
+    const container = document.createElement('div');
+    container.className = 'px-6 fade-in space-y-8 pb-24';
+
+    container.innerHTML = `
+        <div class="flex items-center gap-4 mb-6">
+            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="about-back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <h2 class="text-2xl font-bold text-gray-900">${translations.aboutTab}</h2>
+        </div>
+
+        <div class="space-y-8">
+            <!-- Hero Image/Section -->
+            <div class="relative h-48 rounded-3xl overflow-hidden shadow-lg">
+                <img src="images/traditional_buna_coffee_1776858587628.png" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                    <h3 class="text-white text-xl font-bold">${translations.heroTitle}</h3>
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="grid gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 space-y-3">
+                    <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <h4 class="font-bold text-gray-900">${translations.aboutWho}</h4>
+                    <p class="text-gray-500 text-sm leading-relaxed">${translations.aboutWhoDesc}</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 space-y-3">
+                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h4 class="font-bold text-gray-900">${translations.aboutServe}</h4>
+                    <p class="text-gray-500 text-sm leading-relaxed">${translations.aboutServeDesc}</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50 space-y-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h4 class="font-bold text-gray-900">${translations.aboutStory}</h4>
+                    <p class="text-gray-500 text-sm leading-relaxed">${translations.aboutStoryDesc}</p>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="bg-gray-900 p-8 rounded-[2rem] text-white space-y-6">
+                <h4 class="text-xl font-bold">${translations.contactUs}</h4>
+                
+                <div class="space-y-4">
+                    <a href="https://maps.app.goo.gl/UHosYf9yacEhjLCv8" target="_blank" class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-primary transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${translations.location}</p>
+                            <p class="text-sm font-medium">${translations.address}</p>
+                        </div>
+                    </a>
+
+                    <a href="tel:+251915740101" class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-primary transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${translations.phone}</p>
+                            <p class="text-sm font-medium">+251 91 574 0101</p>
+                        </div>
+                    </a>
+
+                    <a href="https://wa.me/251915740101" target="_blank" class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-green-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.435-9.89 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.744-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${translations.whatsapp}</p>
+                            <p class="text-sm font-medium">WhatsApp Us</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.querySelector('#about-back-btn').onclick = onBack;
+
+    return container;
+}
