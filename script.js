@@ -276,7 +276,7 @@ function animateFlyToCart(sourceImg, callback) {
     // Create a clone of the image
     const clone = sourceImg.cloneNode();
     clone.classList.add('flying-item');
-    
+
     // Set initial position
     clone.style.top = `${imgRect.top}px`;
     clone.style.left = `${imgRect.left}px`;
@@ -299,11 +299,11 @@ function animateFlyToCart(sourceImg, callback) {
     // Cleanup and trigger callback
     clone.addEventListener('transitionend', () => {
         clone.remove();
-        
+
         // Add a small shake animation to the cart button
         cartBtn.classList.add('cart-shake');
         setTimeout(() => cartBtn.classList.remove('cart-shake'), 400);
-        
+
         callback();
     }, { once: true });
 }
@@ -475,7 +475,7 @@ function renderCurrentView(data = null) {
             if (searchSection) searchSection.style.display = 'none';
             if (categoryNav) categoryNav.style.display = 'none';
             if (menuSection) menuSection.style.display = 'none';
-            
+
             const aboutPage = document.createElement('div');
             aboutPage.id = 'extra-view';
             aboutPage.appendChild(createAboutPage(
