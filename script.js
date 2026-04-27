@@ -73,15 +73,14 @@ function init() {
         cartBtn.onclick = () => showView('cart');
     }
 
-    // About Button in Footer (replaces Favorites and History)
-    const footerAboutBtn = document.querySelectorAll('nav.fixed.bottom-6 > div')[1];
+    // About Button in Footer
+    const footerAboutBtn = document.getElementById('footer-about');
     if (footerAboutBtn) {
         footerAboutBtn.onclick = () => showView('about');
-        footerAboutBtn.classList.add('hover:text-primary', 'transition-colors');
     }
 
     // Home Button in Footer
-    const footerHomeBtn = document.querySelectorAll('nav.fixed.bottom-6 > div')[0];
+    const footerHomeBtn = document.getElementById('footer-home');
     if (footerHomeBtn) {
         footerHomeBtn.onclick = () => showView('menu');
     }
@@ -348,7 +347,7 @@ function renderCurrentView(data = null) {
     const searchSection = document.getElementById('search-section');
     const categoryNav = document.getElementById('category-nav');
     const menuSection = document.querySelector('section.px-6.mt-2');
-    const bottomNav = document.querySelector('nav.fixed.bottom-6');
+    const bottomNav = document.querySelector('nav.fixed');
 
     // Reset visibility
     if (header) header.style.display = 'flex';
@@ -366,9 +365,16 @@ function renderCurrentView(data = null) {
     const translations = uiTranslations[currentLang];
 
     // Update bottom nav active state
-    const footerIcons = document.querySelectorAll('nav.fixed.bottom-6 > div, nav.fixed.bottom-6 > a');
-    footerIcons.forEach(icon => icon.classList.remove('text-primary'));
-    footerIcons.forEach(icon => icon.classList.add('text-gray-400'));
+    const footerIcons = [
+        document.getElementById('footer-home'),
+        document.getElementById('footer-about'),
+        document.getElementById('footer-admin')
+    ].filter(el => el !== null);
+
+    footerIcons.forEach(icon => {
+        icon.classList.remove('text-primary');
+        icon.classList.add('text-gray-400');
+    });
 
     switch (state.currentView) {
         case 'menu':
