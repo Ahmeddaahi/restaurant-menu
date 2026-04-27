@@ -31,7 +31,6 @@ try {
 // Application State
 const state = {
     activeCategory: "All",
-    searchTerm: "",
     menuData: initialMenuItems,
     cart: initialCart,
     favorites: initialFavs,
@@ -47,7 +46,6 @@ window.switchLanguage = (lang) => {
     translator.setLanguage(lang);
     translator.updateStaticText();
     translator.updateLanguageButtons();
-    updateSearchPlaceholder();
 
     renderCurrentView();
 };
@@ -60,16 +58,7 @@ function init() {
     renderCurrentView();
     translator.updateStaticText();
     translator.updateLanguageButtons();
-    updateSearchPlaceholder();
 
-    // Search input listener
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.oninput = (e) => {
-            state.searchTerm = e.target.value.toLowerCase().trim();
-            applyFilters();
-        };
-    }
 
     // Language Switchers
     const soBtn = document.getElementById('lang-so');
@@ -120,15 +109,6 @@ function renderCategories() {
     });
 }
 
-/**
- * Update Search Placeholder
- */
-function updateSearchPlaceholder() {
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.placeholder = translator.translate('searchPlaceholder');
-    }
-}
 
 /**
  * Filter by Category
@@ -148,33 +128,19 @@ function filterCategory(category) {
  * Filter Logic
  */
 function applyFilters() {
-    const { activeCategory, searchTerm, menuData } = state;
+    const { activeCategory, menuData } = state;
 
     const filteredItems = menuData.filter(item => {
-        const matchesCategory = activeCategory === "All" || item.category === activeCategory;
-
-        if (!searchTerm) return matchesCategory;
-
-        const nameSo = item.name.so.toLowerCase();
-        const nameEn = item.name.en.toLowerCase();
-        const descSo = item.description.so.toLowerCase();
-        const descEn = item.description.en.toLowerCase();
-
-        const matchesSearch = nameSo.includes(searchTerm) ||
-            nameEn.includes(searchTerm) ||
-            descSo.includes(searchTerm) ||
-            descEn.includes(searchTerm);
-
-        return matchesCategory && matchesSearch;
+        return activeCategory === "All" || item.category === activeCategory;
     });
 
-    renderMenu(filteredItems, searchTerm !== "");
+    renderMenu(filteredItems);
 }
 
 /**
  * Render Menu Grid
  */
-function renderMenu(items, isSearching = false) {
+function renderMenu(items) {
     const grid = document.getElementById('menu-grid');
     if (!grid) return;
 
@@ -183,8 +149,7 @@ function renderMenu(items, isSearching = false) {
     const translations = uiTranslations[currentLang];
 
     if (items.length === 0) {
-        const emptyMessage = isSearching ? translations.searchNoResults : translations.noItems;
-        grid.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-10 fade-in">${emptyMessage}</p>`;
+        grid.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-10 fade-in">${translations.noItems}</p>`;
         return;
     }
 
@@ -389,7 +354,6 @@ function renderCurrentView(data = null) {
     if (header) header.style.display = 'flex';
     if (main) main.style.display = 'block';
     if (heroSection) heroSection.style.display = 'block';
-    if (searchSection) searchSection.style.display = 'block';
     if (categoryNav) categoryNav.style.display = 'block';
     if (menuSection) menuSection.style.display = 'block';
     if (bottomNav) bottomNav.style.display = 'flex';
@@ -412,7 +376,6 @@ function renderCurrentView(data = null) {
                 footerIcons[0].classList.add('text-primary');
                 footerIcons[0].classList.remove('text-gray-400');
             }
-            if (searchSection) searchSection.style.display = 'block';
             if (categoryNav) categoryNav.style.display = 'block';
             if (menuSection) menuSection.style.display = 'block';
             renderCategories();

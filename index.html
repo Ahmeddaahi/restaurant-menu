@@ -46,7 +46,7 @@
 <body class="bg-[#F8F9FA]">
 
     <!-- Header -->
-    <header class="px-6 py-2 flex items-center justify-between bg-[#F8F9FA] sticky top-0 z-[60]">
+    <header class="px-4 py-3 flex items-center justify-between bg-[#F8F9FA] sticky top-0 z-[60]">
         <!-- Restaurant Logo & Name -->
         <div class="flex items-center gap-2">
             <div class="w-28 h-28 flex items-center justify-center overflow-hidden">
@@ -89,26 +89,10 @@
             </div>
         </section>
 
-        <!-- Search Section -->
-        <section id="search-section" class="px-6 py-2 sticky-search z-50">
-            <!-- Search Bar -->
-            <div class="relative flex items-center">
-                <input type="text" id="search-input"
-                    class="w-full bg-white border-none rounded-2xl py-3 pl-12 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    placeholder="Search dishes, restaurants...">
-                <div class="absolute left-4 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-            </div>
-        </section>
 
         <!-- Categories -->
         <section id="category-nav" class="sticky-category">
-            <div class="flex gap-3 overflow-x-auto px-6 no-scrollbar" id="category-list">
+            <div class="flex gap-3 items-center justify-center overflow-x-auto px-6 no-scrollbar" id="category-list">
                 <!-- Categories will be injected here -->
             </div>
         </section>
