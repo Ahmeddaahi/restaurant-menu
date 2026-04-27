@@ -127,8 +127,8 @@ export const categories = [
 
 export const uiTranslations = {
     so: {
-        heroSubtitle: "Guri Dhab ah",
-        heroTitle: "Ku soo dhawaada Munaasabadda Bunka",
+        heroSubtitle: "Cusub & Caafimaad",
+        heroTitle: "Ku soo dhawaada Casiirka Cusub ee Nadi's",
         menuTab: "Menu",
         favoritesTab: "Jeceylka",
         historyTab: "Taariikh",
@@ -148,8 +148,8 @@ export const uiTranslations = {
         confirmCheckout: "Ma hubaal inaad rabto inaad dalbato?"
     },
     en: {
-        heroSubtitle: "Authentic Hearth",
-        heroTitle: "Welcome to the Coffee Ceremony",
+        heroSubtitle: "Fresh & Healthy",
+        heroTitle: "Welcome to Nadi's Fresh Juice",
         menuTab: "Menu",
         favoritesTab: "Favorites",
         historyTab: "History",

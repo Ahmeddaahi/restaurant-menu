@@ -1,7 +1,9 @@
 :root {
     color-scheme: light;
-    --primary: #FF4747;
-    --primary-light: #FFEDED;
+    --primary: #31642D;
+    --primary-light: #E8F5E9;
+    --secondary: #F37021;
+    --accent: #D4DF22;
     --bg-light: #F8F9FA;
     --card-bg: #FFFFFF;
     --text-main: #1A1A1A;
@@ -40,13 +42,20 @@ body {
 #lang-en.active {
     background-color: var(--primary);
     color: white;
-    box-shadow: 0 8px 20px rgba(255, 71, 71, 0.2);
+    box-shadow: 0 8px 20px rgba(49, 100, 45, 0.2);
 }
 
-/* Sticky Category Nav */
+/* Sticky Navigation */
+.sticky-search {
+    position: sticky;
+    top: 128px;
+    background-color: var(--bg-light);
+    z-index: 55;
+}
+
 .sticky-category {
     position: sticky;
-    top: 64px;
+    top: 184px;
     /* Adjust based on header height */
     z-index: 50;
     background-color: var(--bg-light);

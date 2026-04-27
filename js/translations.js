@@ -37,9 +37,12 @@ class TranslationManager {
         const t = uiTranslations[this.currentLang];
         if (!t) return;
 
-        // Update Page Title
-        const menuTitle = document.querySelector('[data-translate="menuTab"]');
-        if (menuTitle) menuTitle.textContent = t.menuTab;
+        document.querySelectorAll('[data-translate]').forEach(el => {
+            const key = el.getAttribute('data-translate');
+            if (t[key]) {
+                el.textContent = t[key];
+            }
+        });
     }
 
     /**
