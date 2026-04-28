@@ -443,3 +443,37 @@ header {
         padding-bottom: 2rem;
     }
 }
+
+/* Cart and About page refinements */
+#extra-view {
+    min-height: 100vh;
+    background: var(--bg-light);
+}
+
+.cart-item-card {
+    transition: var(--transition);
+}
+
+.cart-item-card:hover {
+    transform: translateY(-2px);
+}
+
+.order-summary {
+    border: none;
+}
+
+@media (min-width: 768px) {
+    .cart-item-card {
+        padding: 1.25rem;
+    }
+
+    .about-hero-card {
+        min-height: 28rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .about-hero-card {
+        min-height: 32rem;
+    }
+}
