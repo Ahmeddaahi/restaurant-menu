@@ -301,4 +301,145 @@ body {
 
 .cart-shake {
     animation: cart-shake 0.4s ease-out;
+}/* Desktop and Tablet Layout Improvements */
+body {
+    min-height: 100vh;
+}
+
+header,
+main,
+nav,
+#hero-section,
+#category-nav,
+#menu-grid {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+#hero-section {
+    padding-top: 1.5rem;
+}
+
+.sticky-category {
+    padding-top: 1rem;
+    padding-bottom: 0.75rem;
+}
+
+#category-list {
+    align-items: center;
+}
+
+.item-card {
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.05);
+}
+
+.item-card:hover {
+    transform: translateY(-3px);
+}
+
+@media (min-width: 640px) {
+    .category-tab {
+        padding: 0.9rem 1.2rem;
+        font-size: 14px;
+    }
+
+    .add-btn {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .item-card h3 {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 768px) {
+    header {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    #hero-section .relative {
+        min-height: 20rem;
+    }
+
+    #menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+    }
+
+    .item-card {
+        border-radius: 28px;
+    }
+
+    .favorite-btn {
+        top: 16px;
+        right: 16px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .favorite-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (min-width: 1024px) {
+    header {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+    #hero-section {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+    #hero-section .relative {
+        min-height: 24rem;
+    }
+
+    #menu-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .item-card {
+        min-height: 100%;
+    }
+
+    .item-card .p-3 {
+        padding: 1.25rem;
+    }
+
+    .item-card h3 {
+        font-size: 1rem;
+    }
+
+    .add-btn {
+        padding: 10px 14px;
+    }
+
+    nav {
+        position: static;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        margin: 2rem auto 0;
+        max-width: 720px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    main {
+        padding-bottom: 2rem;
+    }
 }
