@@ -2,13 +2,10 @@
  * Jua Café - Main Application Logic (Controller)
  */
 
-import { menuItems, categories, uiTranslations } from './js/data.js';
+import { menuItems, uiTranslations } from './js/data.js';
 import { translator } from './js/translations.js';
 import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage } from './js/components.js';
-
-// Load data from localStorage or fallback to default
-const savedItems = localStorage.getItem('customMenuItems');
-const initialMenuItems = savedItems ? JSON.parse(savedItems) : menuItems;
+import { supabase } from './js/supabase.js';
 
 // Load cart from localStorage
 const savedCart = localStorage.getItem('cart');
@@ -31,11 +28,58 @@ try {
 // Application State
 const state = {
     activeCategory: "All",
-    menuData: initialMenuItems,
+    menuData: [], // To be filled from Supabase
+    categories: [], // To be filled from Supabase
     cart: initialCart,
     favorites: initialFavs,
     currentView: 'menu' // 'menu', 'cart', 'details', 'about'
 };
+
+/**
+ * Fetch Data from Supabase
+ */
+async function fetchSupabaseData() {
+    // Fetch categories
+    const { data: categories, error: catError } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name_en');
+    
+    if (catError) {
+        console.error('Error fetching categories:', catError);
+        // Fallback to static if needed or show error
+    } else {
+        state.categories = [
+            { id: "All", so: "Dhammaan", en: "All" },
+            ...categories.map(c => ({ id: c.id, so: c.name_so, en: c.name_en }))
+        ];
+    }
+
+    // Fetch menu items
+    const { data: items, error: itemError } = await supabase
+        .from('menu_items')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (itemError) {
+        console.error('Error fetching items:', itemError);
+        state.menuData = menuItems; // Fallback to static
+    } else {
+        state.menuData = items.map(item => ({
+            id: item.id,
+            name: { en: item.name_en, so: item.name_so },
+            category: item.category_id,
+            price: item.price,
+            image: item.image_url,
+            description: { en: item.description_en, so: item.description_so },
+            isPopular: item.is_popular,
+            rating: item.rating,
+            prepTime: item.prep_time
+        }));
+    }
+
+    renderCurrentView();
+}
 
 /**
  * Unified language switching logic
@@ -53,9 +97,15 @@ window.switchLanguage = (lang) => {
 /**
  * Initialize the App
  */
-function init() {
+async function init() {
     updateCartBadge();
+    
+    // Initial render with loading state or static fallback
     renderCurrentView();
+    
+    // Fetch fresh data from Supabase
+    await fetchSupabaseData();
+
     translator.updateStaticText();
     translator.updateLanguageButtons();
 
@@ -96,7 +146,7 @@ function renderCategories() {
     categoryList.innerHTML = '';
     const currentLang = translator.getLanguage();
 
-    categories.forEach(cat => {
+    state.categories.forEach(cat => {
         const isActive = cat.id === state.activeCategory;
         const btn = createCategoryTab(
             cat,

@@ -4,220 +4,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Nadi's</title>
+    <title>Admin Dashboard | Nadi's Fresh Juice</title>
     <meta name="color-scheme" content="light">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#31642D',
+                        secondary: '#FF8A00',
+                        accent: '#FFD600',
+                        surface: '#FFFFFF',
+                        background: '#F4F7F5',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        '3xl': '1.5rem',
+                        '4xl': '2rem',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
-            color-scheme: light;
-            --primary: #31642D;
-            --bg-light: #F8F9FA;
+            --primary-gradient: linear-gradient(135deg, #31642D 0%, #4A8C45 100%);
+            --secondary-gradient: linear-gradient(135deg, #FF8A00 0%, #FFB258 100%);
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-light);
+            background-color: #F4F7F5;
+            color: #1A2F18;
+            overflow-x: hidden;
         }
 
-        .admin-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
         }
 
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            transition: all 0.2s;
+        .btn-glow-primary {
+            background: var(--primary-gradient);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(49, 100, 45, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-primary:hover {
+        .btn-glow-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(49, 100, 45, 0.3);
+            box-shadow: 0 8px 25px rgba(49, 100, 45, 0.4);
         }
 
-        .modal {
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
+        .btn-glow-secondary {
+            background: var(--secondary-gradient);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(255, 138, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-glow-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 138, 0, 0.4);
+        }
+
+        .sidebar-link.active {
+            background: rgba(49, 100, 45, 0.1);
+            color: #31642D;
+            border-right: 4px solid #31642D;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(49, 100, 45, 0.1);
+            border-radius: 10px;
+        }
+
+        .modal-backdrop {
+            background: rgba(26, 47, 24, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        input:focus, textarea:focus, select:focus {
+            box-shadow: 0 0 0 4px rgba(49, 100, 45, 0.1) !important;
+            border-color: #31642D !important;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
     </style>
 </head>
 
-<body class="min-h-screen">
+<body class="min-h-screen font-sans">
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-6">
-        <div class="w-full max-w-md space-y-8 text-center">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-900">Admin Login</h2>
-                <p class="mt-2 text-sm text-gray-600">Enter your password to manage the menu</p>
+    <!-- Auth Container -->
+    <div id="login-screen" class="fixed inset-0 z-[100] bg-background flex items-center justify-center p-6">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-10">
+                <div class="inline-block p-4 rounded-4xl bg-white shadow-xl mb-6 animate-float">
+                    <img src="images/logo.png" alt="Nadi's Logo" class="h-20 w-auto">
+                </div>
+                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Admin Portal</h2>
+                <p class="text-gray-500 mt-2">Manage the freshest menu in town</p>
             </div>
-            <div class="mt-8 space-y-4">
-                <input type="password" id="admin-password"
-                    class="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    placeholder="Enter password...">
-                <button onclick="checkLogin()" class="w-full btn-primary py-4 rounded-2xl font-bold">Login</button>
-                <p id="login-error" class="text-red-500 text-xs hidden">Incorrect password. Please try again.</p>
+            
+            <div class="glass-card p-8 rounded-4xl shadow-2xl">
+                <form onsubmit="handleLogin(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-primary uppercase tracking-widest mb-2 ml-1">Email</label>
+                        <input type="email" id="admin-email" required
+                            class="w-full px-6 py-4 rounded-2xl bg-white border border-gray-100 focus:outline-none transition-all text-sm"
+                            placeholder="admin@nadis.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-primary uppercase tracking-widest mb-2 ml-1">Password</label>
+                        <input type="password" id="admin-password" required
+                            class="w-full px-6 py-4 rounded-2xl bg-white border border-gray-100 focus:outline-none transition-all text-sm"
+                            placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full btn-glow-primary text-white py-4 rounded-2xl font-bold text-sm tracking-wide">
+                        Secure Login
+                    </button>
+                    <p id="login-error" class="text-red-500 text-xs text-center font-medium hidden">
+                        <span class="inline-block mr-1">⚠️</span> Invalid credentials. Please try again.
+                    </p>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
-    <div id="dashboard" class="hidden">
-        <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
-            <div class="max-w-6xl mx-auto px-6 pt-3 pb-0 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-gray-400 hover:text-primary transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" />
-                        </svg>
-                    </a>
-                    <div class="w-20 h-20 flex items-center justify-center overflow-hidden">
-                        <img src="images/logo.png" alt="Logo" class="w-full h-full object-contain">
-                    </div>
-                    <h1 class="text-xl font-bold text-gray-900">Menu Management</h1>
-                </div>
-                <button onclick="logout()" class="text-sm text-gray-400 hover:text-red-500 font-medium">Logout</button>
+    <!-- Dashboard Layout -->
+    <div id="dashboard" class="hidden min-h-screen flex">
+        <!-- Sidebar (Hidden on Mobile) -->
+        <aside class="hidden lg:flex w-72 flex-col bg-white border-r border-gray-100 sticky top-0 h-screen">
+            <div class="p-8">
+                <img src="images/logo.png" alt="Logo" class="h-12 w-auto">
             </div>
-        </header>
+            
+            <nav class="flex-grow px-4 space-y-2 mt-4">
+                <a href="#" class="sidebar-link active flex items-center gap-4 px-6 py-4 rounded-2xl transition-all font-semibold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    Menu Items
+                </a>
+                <a href="#" onclick="openCategoryModal()" class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-400 hover:text-primary hover:bg-gray-50 transition-all font-semibold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Categories
+                </a>
+            </nav>
 
-        <main class="max-w-6xl mx-auto p-6 space-y-8">
-            <!-- Stats & Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="admin-card p-6 flex flex-col justify-center">
-                    <span class="text-gray-400 text-sm">Total Items</span>
-                    <span id="total-items" class="text-3xl font-bold text-gray-900">0</span>
-                </div>
-                <div class="admin-card p-6 flex flex-col justify-center">
-                    <span class="text-gray-400 text-sm">Categories</span>
-                    <span id="total-categories" class="text-3xl font-bold text-gray-900">0</span>
-                </div>
-                <button onclick="openModal()"
-                    class="admin-card p-6 bg-primary text-white flex items-center justify-center gap-3 hover:opacity-90 transition-opacity">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span class="font-bold">Add New Item</span>
+            <div class="p-8 border-t border-gray-50">
+                <button onclick="handleLogout()" class="flex items-center gap-3 text-red-500 font-bold text-sm hover:translate-x-1 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Logout
                 </button>
             </div>
+        </aside>
 
-            <!-- Item Table -->
-            <div class="admin-card overflow-hidden">
-                <div
-                    class="p-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <h3 class="font-bold text-gray-900">Current Menu</h3>
-                    <input type="text" id="admin-search" oninput="filterAdminItems()"
-                        class="bg-gray-50 border-none rounded-xl px-4 py-2 text-sm w-full md:w-64 focus:ring-2 focus:ring-primary/20 outline-none"
-                        placeholder="Search items...">
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <!-- Topbar -->
+            <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40 px-8 py-4 flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Menu Dashboard</h1>
+                    <p class="text-xs text-gray-400 font-medium mt-1">Logged in as Administrator</p>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 text-[11px] uppercase tracking-wider text-gray-500 font-bold">
-                            <tr>
-                                <th class="px-6 py-4">Item</th>
-                                <th class="px-6 py-4">Category</th>
-                                <th class="px-6 py-4">Price</th>
-                                <th class="px-6 py-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="item-list" class="divide-y divide-gray-50">
-                            <!-- Items will be injected here -->
-                        </tbody>
-                    </table>
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="p-3 rounded-2xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </a>
+                    <button onclick="openModal()" class="btn-glow-primary text-white px-8 py-3 rounded-2xl font-bold text-sm flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Add Item
+                    </button>
+                </div>
+            </header>
+
+            <div class="p-8 space-y-10 max-w-7xl mx-auto">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-card p-8 rounded-4xl bg-white overflow-hidden relative group">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Active Items</p>
+                        <h3 id="total-items" class="text-4xl font-black text-primary">0</h3>
+                    </div>
+                    <div class="glass-card p-8 rounded-4xl bg-white overflow-hidden relative group">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Categories</p>
+                        <h3 id="total-categories" class="text-4xl font-black text-secondary">0</h3>
+                    </div>
+                    <div class="lg:col-span-2 glass-card p-8 rounded-4xl bg-gradient-to-br from-primary to-primary/80 text-white flex items-center justify-between">
+                        <div>
+                            <h4 class="text-xl font-bold mb-1">Menu Control</h4>
+                            <p class="text-sm text-white/80">Update dishes and organize categories live.</p>
+                        </div>
+                        <button onclick="openCategoryModal()" class="bg-white text-primary px-6 py-3 rounded-2xl font-bold text-xs shadow-lg hover:scale-105 transition-transform">
+                            Manage Categories
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Section -->
+                <div class="glass-card rounded-4xl bg-white overflow-hidden">
+                    <div class="p-8 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-2 h-8 bg-primary rounded-full"></div>
+                            <h3 class="text-xl font-extrabold text-gray-900">Current Menu</h3>
+                        </div>
+                        <div class="relative w-full md:w-80">
+                            <input type="text" id="admin-search" oninput="filterAdminItems()"
+                                class="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-12 py-3.5 text-sm focus:outline-none transition-all"
+                                placeholder="Search items...">
+                            <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-gray-50/50 text-[10px] uppercase tracking-widest text-gray-400 font-black">
+                                    <th class="px-8 py-5">Product Details</th>
+                                    <th class="px-8 py-5">Category</th>
+                                    <th class="px-8 py-5">Price</th>
+                                    <th class="px-8 py-5">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="item-list" class="divide-y divide-gray-50">
+                                <!-- Items injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal for Add/Edit -->
-    <div id="item-modal" class="modal fixed inset-0 z-[100] hidden items-center justify-center p-6">
-        <div
-            class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
-            <div class="p-6 border-b border-gray-50 flex items-center justify-between">
-                <h3 id="modal-title" class="text-xl font-bold text-gray-900">Add New Item</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+    <!-- Modern Modal: Add/Edit Item -->
+    <div id="item-modal" class="modal fixed inset-0 z-[100] hidden items-center justify-center p-6 modal-backdrop">
+        <div class="bg-white w-full max-w-3xl rounded-4xl overflow-hidden shadow-2xl animate-in zoom-in duration-300">
+            <div class="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                <div>
+                    <h3 id="modal-title" class="text-2xl font-extrabold text-gray-900">Add New Item</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-1">Fill in the details for your menu entry</p>
+                </div>
+                <button onclick="closeModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-gray-100 text-gray-400 hover:text-red-500 hover:border-red-100 transition-all shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <form id="item-form" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6" onsubmit="saveItem(event)">
+            
+            <form id="item-form" class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 custom-scrollbar max-h-[75vh] overflow-y-auto" onsubmit="handleSaveItem(event)">
                 <input type="hidden" id="edit-id">
 
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name (English)</label>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Name (English)</label>
                         <input type="text" id="name-en" required
-                            class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                            class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all"
+                            placeholder="e.g. Classic Mango Juice">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name (Somali)</label>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Name (Somali)</label>
                         <input type="text" id="name-so" required
-                            class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                            class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all"
+                            placeholder="Casiir Cambe">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Price ($)</label>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Price (ETB)</label>
                             <input type="number" id="price" required
-                                class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all"
+                                placeholder="150">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Category</label>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Category</label>
                             <select id="category" required
-                                class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
-                                <!-- Categories will be injected -->
+                                class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all cursor-pointer">
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Image URL</label>
-                        <input type="text" id="image-url" required
-                            class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
-                            placeholder="https://...">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Meal Visual</label>
+                        <div class="p-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-center group hover:border-primary/30 transition-colors">
+                            <input type="file" id="image-file" accept="image/*" class="hidden">
+                            <label for="image-file" class="cursor-pointer">
+                                <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-primary mb-2 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <p class="text-xs font-bold text-gray-600">Upload Image</p>
+                            </label>
+                        </div>
+                        <input type="text" id="image-url"
+                            class="w-full bg-gray-50 border-none rounded-2xl px-6 py-3 text-[10px] mt-3 focus:outline-none transition-all"
+                            placeholder="...or paste image URL">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Prep Time (min)</label>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Prep Time</label>
                             <input type="text" id="prep-time" required
-                                class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="10-15">
+                                class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all"
+                                placeholder="10-15 min">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Rating</label>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Rating</label>
                             <input type="number" id="rating" step="0.1" max="5" required
-                                class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all"
+                                placeholder="4.5">
                         </div>
                     </div>
                 </div>
 
-                <div class="md:col-span-2 space-y-4">
+                <div class="md:col-span-2 space-y-6">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Description
-                            (English)</label>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Description (EN)</label>
                         <textarea id="desc-en" required
-                            class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none h-20"></textarea>
+                            class="w-full bg-gray-50 border-none rounded-3xl px-6 py-4 text-sm focus:outline-none transition-all h-24 resize-none"></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Description (Somali)</label>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Description (SO)</label>
                         <textarea id="desc-so" required
-                            class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none h-20"></textarea>
+                            class="w-full bg-gray-50 border-none rounded-3xl px-6 py-4 text-sm focus:outline-none transition-all h-24 resize-none"></textarea>
                     </div>
                 </div>
 
-                <div class="md:col-span-2 pt-4">
-                    <button type="submit" class="w-full btn-primary py-4 rounded-2xl font-bold">Save Item</button>
+                <div class="md:col-span-2 pt-6">
+                    <button type="submit" id="save-btn" class="w-full btn-glow-primary text-white py-5 rounded-2xl font-bold text-base tracking-wide flex items-center justify-center gap-3">
+                        Save to Menu
+                    </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modern Modal: Category Management -->
+    <div id="category-modal" class="modal fixed inset-0 z-[100] hidden items-center justify-center p-6 modal-backdrop">
+        <div class="bg-white w-full max-w-lg rounded-4xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom duration-300">
+            <div class="p-8 border-b border-gray-50 flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-extrabold text-gray-900">Manage Categories</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-1">Organize your menu structure</p>
+                </div>
+                <button onclick="closeCategoryModal()" class="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-8 space-y-8">
+                <form onsubmit="handleAddCategory(event)" class="space-y-4 bg-gray-50 p-6 rounded-3xl">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="new-cat-id" placeholder="ID (e.g. Pizza)" required
+                            class="bg-white border-none rounded-2xl px-5 py-3 text-sm focus:outline-none">
+                        <input type="text" id="new-cat-en" placeholder="English Name" required
+                            class="bg-white border-none rounded-2xl px-5 py-3 text-sm focus:outline-none">
+                    </div>
+                    <div class="flex gap-4">
+                        <input type="text" id="new-cat-so" placeholder="Somali Name" required
+                            class="flex-grow bg-white border-none rounded-2xl px-5 py-3 text-sm focus:outline-none">
+                        <button type="submit" class="btn-glow-primary text-white px-6 py-3 rounded-2xl font-bold text-xs whitespace-nowrap">
+                            Add New
+                        </button>
+                    </div>
+                </form>
+                <div class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar pr-2" id="category-list-admin"></div>
+            </div>
         </div>
     </div>
 
