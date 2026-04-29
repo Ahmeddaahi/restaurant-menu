@@ -357,5 +357,27 @@ window.handleDeleteCategory = async (id) => {
     }
 };
 
+// --- Mobile Navigation ---
+window.toggleMobileMenu = () => {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    const isOpen = !sidebar.classList.contains('-translate-x-full');
+
+    if (isOpen) {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+    } else {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+    }
+};
+
 // Start initialization
 document.addEventListener('DOMContentLoaded', init);
