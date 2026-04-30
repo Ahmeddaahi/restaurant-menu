@@ -123,17 +123,17 @@ function renderCategorySelect() {
 function renderCategoryListAdmin() {
     const list = document.getElementById('category-list-admin');
     list.innerHTML = state.categories.map(c => `
-        <div class="flex items-center justify-between p-5 bg-white border border-gray-100 rounded-2xl hover:shadow-md transition-shadow group">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold text-xs uppercase">
+        <div class="flex items-center justify-between p-4 sm:p-5 bg-white border border-gray-100 rounded-2xl hover:shadow-md transition-shadow group">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold text-[10px] sm:text-xs uppercase shrink-0">
                     ${c.id.substring(0, 2)}
                 </div>
-                <div>
-                    <div class="font-bold text-gray-900 text-sm">${c.name_en}</div>
-                    <div class="text-[10px] text-gray-400 font-medium">${c.name_so}</div>
+                <div class="min-w-0">
+                    <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">${c.name_en}</div>
+                    <div class="text-[9px] sm:text-[10px] text-gray-400 font-medium truncate">${c.name_so}</div>
                 </div>
             </div>
-            <button onclick="handleDeleteCategory('${c.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100">
+            <button onclick="handleDeleteCategory('${c.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all lg:opacity-0 lg:group-hover:opacity-100 shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>

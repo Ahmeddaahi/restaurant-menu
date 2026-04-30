@@ -315,7 +315,7 @@
                             class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all"
                             placeholder="Casiir Cambe">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Price (ETB)</label>
                             <input type="number" id="price" required
@@ -347,7 +347,7 @@
                             class="w-full bg-gray-50 border-none rounded-2xl px-6 py-3 text-[10px] mt-3 focus:outline-none transition-all"
                             placeholder="...or paste image URL">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Prep Time</label>
                             <input type="text" id="prep-time" required
@@ -400,16 +400,16 @@
             
             <div class="p-8 space-y-8">
                 <form onsubmit="handleAddCategory(event)" class="space-y-4 bg-gray-50 p-6 rounded-3xl">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <input type="text" id="new-cat-id" placeholder="ID (e.g. Pizza)" required
                             class="bg-white border-none rounded-2xl px-5 py-3 text-sm focus:outline-none">
                         <input type="text" id="new-cat-en" placeholder="English Name" required
                             class="bg-white border-none rounded-2xl px-5 py-3 text-sm focus:outline-none">
                     </div>
-                    <div class="flex gap-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
                         <input type="text" id="new-cat-so" placeholder="Somali Name" required
                             class="flex-grow bg-white border-none rounded-2xl px-5 py-3 text-sm focus:outline-none">
-                        <button type="submit" class="btn-glow-primary text-white px-6 py-3 rounded-2xl font-bold text-xs whitespace-nowrap">
+                        <button type="submit" class="btn-glow-primary text-white px-6 py-3 rounded-2xl font-bold text-xs whitespace-nowrap w-full sm:w-auto">
                             Add New
                         </button>
                     </div>
