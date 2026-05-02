@@ -51,9 +51,11 @@ class TranslationManager {
     updateLanguageButtons() {
         const soBtn = document.getElementById('lang-so');
         const enBtn = document.getElementById('lang-en');
+        const container = document.getElementById('lang-toggle-container');
 
-        if (soBtn && enBtn) {
+        if (soBtn && enBtn && container) {
             const current = this.currentLang;
+            container.setAttribute('data-lang', current);
 
             if (current === 'so') {
                 soBtn.classList.add('active');

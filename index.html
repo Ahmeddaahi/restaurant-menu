@@ -12,11 +12,13 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.nadicafe.com">
     <link rel="preconnect" href="https://images.unsplash.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Preload Hero Image -->
-    <link rel="preload" as="image" href="images/hero.png" fetchpriority="high">
+    <!-- Preload LCP Images -->
+    <link rel="preload" as="image" href="images/logo.webp" fetchpriority="high">
+    <link rel="preload" as="image" href="images/maxresdefault.webp" fetchpriority="high">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -50,21 +52,24 @@
         <!-- Restaurant Logo & Name -->
         <div class="flex items-center gap-2">
             <div class="w-28 h-28 flex items-center justify-center overflow-hidden">
-                <img src="images/logo.png" alt="Nadi's Logo" class="w-full h-full object-contain">
+                <img src="images/logo.webp" alt="Nadi's Logo" width="112" height="112" class="w-full h-full object-contain" fetchpriority="high">
             </div>
         </div>
 
         <div class="flex items-center gap-3">
-            <div class="flex gap-1 bg-gray-200/50 p-1 rounded-xl">
-                <button id="lang-so" class="px-3 py-1 rounded-lg text-[10px] font-bold transition-all">SO</button>
-                <button id="lang-en" class="px-3 py-1 rounded-lg text-[10px] font-bold transition-all">EN</button>
+            <div class="relative flex bg-gray-100 p-1 rounded-2xl w-24 h-9 shadow-inner border border-gray-200/50" id="lang-toggle-container">
+                <!-- Sliding Indicator -->
+                <div id="lang-indicator" class="absolute top-1 left-1 w-[46px] h-7 bg-primary rounded-xl shadow-md transition-all duration-300 ease-out z-0"></div>
+                
+                <button id="lang-so" aria-label="Switch to Somali" class="relative z-10 flex-1 flex items-center justify-center text-[10px] font-bold transition-colors duration-300">SO</button>
+                <button id="lang-en" aria-label="Switch to English" class="relative z-10 flex-1 flex items-center justify-center text-[10px] font-bold transition-colors duration-300">EN</button>
             </div>
 
             <div class="relative">
-                <button id="cart-btn-main"
+                <button id="cart-btn-main" aria-label="View shopping cart"
                     class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800 active:scale-90 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+                        stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
@@ -78,7 +83,7 @@
         <!-- Hero Section -->
         <section id="hero-section" class="px-6 py-2">
             <div class="relative h-44 rounded-[32px] overflow-hidden shadow-xl animate-slide-up">
-                <img src="images/hero.png" alt="Nadi's Fresh Juice" class="w-full h-full object-cover">
+                <img src="images/maxresdefault.webp" alt="Nadi's Fresh Juice" width="800" height="176" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                 <div class="absolute bottom-6 left-8 right-8">
                     <span class="text-accent font-bold text-xs uppercase tracking-widest mb-1 block"
@@ -92,6 +97,7 @@
 
         <!-- Categories -->
         <section id="category-nav" class="sticky-category">
+            <h2 class="sr-only">Menu Categories</h2>
             <div class="flex gap-3 overflow-x-auto px-6 no-scrollbar" id="category-list">
                 <!-- Categories will be injected here -->
             </div>
@@ -99,6 +105,7 @@
 
         <!-- Menu Grid -->
         <section class="px-6 mt-2">
+            <h2 class="sr-only">Food and Drinks</h2>
             <div class="grid grid-cols-2 gap-x-4 gap-y-6" id="menu-grid">
                 <!-- Menu items will be injected here -->
             </div>
@@ -122,10 +129,10 @@
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </div>
-        <a id="footer-admin" href="admin.html"
+        <a id="footer-admin" href="admin.html" aria-label="Admin Dashboard"
             class="flex flex-col items-center gap-1 text-gray-700 hover:text-primary transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
+                stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

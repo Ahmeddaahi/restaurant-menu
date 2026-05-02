@@ -7,8 +7,20 @@
     --bg-light: #F8F9FA;
     --card-bg: #FFFFFF;
     --text-main: #1A1A1A;
-    --text-muted: #8E8E93;
+    --text-muted: #555555; /* Improved from #8E8E93 for contrast */
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
 
 body {
@@ -37,12 +49,27 @@ body {
     white-space: nowrap;
 }
 
-.category-tab.active,
-#lang-so.active,
-#lang-en.active {
+.category-tab.active {
     background-color: var(--primary);
     color: white;
     box-shadow: 0 8px 20px rgba(49, 100, 45, 0.2);
+}
+
+/* Language Toggle Custom Styles */
+#lang-toggle-container button {
+    color: #4B5563; /* text-gray-600 for better contrast */
+}
+
+#lang-toggle-container button.active {
+    color: #FFFFFF;
+}
+
+#lang-toggle-container[data-lang="en"] #lang-indicator {
+    transform: translateX(40px);
+}
+
+#lang-toggle-container[data-lang="so"] #lang-indicator {
+    transform: translateX(0);
 }
 
 /* Sticky Navigation */
@@ -236,7 +263,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #8E8E93;
+    color: #555555; /* Improved from #8E8E93 */
     transition: var(--transition);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 10;

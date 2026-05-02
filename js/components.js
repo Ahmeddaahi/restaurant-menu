@@ -24,8 +24,8 @@ export function createItemCard(
                  loading="lazy" 
                  decoding="async"
                  onload="this.parentElement.classList.add('loaded')">
-            <button class="favorite-btn ${item.isFavorite ? "active" : ""}" id="fav-${item.id}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="${item.isFavorite ? "currentColor" : "none"}" viewBox="0 0 24 24" stroke="currentColor">
+            <button class="favorite-btn ${item.isFavorite ? "active" : ""}" id="fav-${item.id}" aria-label="${item.isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="${item.isFavorite ? "currentColor" : "none"}" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
             </button>
@@ -48,8 +48,8 @@ export function createItemCard(
             <h3 class="font-bold text-gray-800 text-[13px] leading-tight mb-2 line-clamp-1">${item.name[lang]}</h3>
             <div class="flex items-center justify-between mt-auto">
                 <span class="text-gray-900 font-bold text-base">${translations.currency} ${item.price}</span>
-                <button class="add-btn" id="add-${item.id}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button class="add-btn" id="add-${item.id}" aria-label="Add ${item.name[lang]} to cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <span>${translations.addToCart}</span>
@@ -133,8 +133,8 @@ export function createCartPage(
                             <h4 class="text-base font-bold text-gray-900">${item.name[lang]}</h4>
                             <p class="text-sm text-gray-500 mt-1">${item.quantity} × ${translations.currency} ${item.price}</p>
                         </div>
-                        <button class="text-gray-400 hover:text-primary transition-colors" onclick="this.dispatchEvent(new CustomEvent('remove-item', {bubbles: true, detail: ${item.id}}))">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button class="text-gray-400 hover:text-primary transition-colors" aria-label="Remove ${item.name[lang]} from cart" onclick="this.dispatchEvent(new CustomEvent('remove-item', {bubbles: true, detail: ${item.id}}))">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </button>
@@ -142,9 +142,9 @@ export function createCartPage(
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <span class="text-primary font-semibold text-lg">${translations.currency} ${(item.price * item.quantity).toFixed(2)}</span>
                         <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1.5">
-                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: -1}}))">-</button>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" aria-label="Decrease quantity" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: -1}}))">-</button>
                             <span class="w-10 text-center text-sm font-semibold">${item.quantity}</span>
-                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: 1}}))">+</button>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" aria-label="Increase quantity" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: 1}}))">+</button>
                         </div>
                     </div>
                 </div>
@@ -171,8 +171,8 @@ export function createCartPage(
 
   container.innerHTML = `
         <div class="flex items-center gap-4 mb-6">
-            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="header-back-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="header-back-btn" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
@@ -219,8 +219,8 @@ export function createItemDetailsPage(
         <div class="relative h-[45vh] w-full">
             <img src="${item.image}" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-            <button class="absolute top-6 left-6 w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white" id="details-back-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button class="absolute top-6 left-6 w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white" id="details-back-btn" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
@@ -276,8 +276,8 @@ export function createItemDetailsPage(
             </div>
 
             <div class="pt-8 mt-auto">
-                <button class="w-full bg-primary text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-primary/30 active:scale-95 transition-transform flex items-center justify-center gap-3" id="details-add-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button class="w-full bg-primary text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-primary/30 active:scale-95 transition-transform flex items-center justify-center gap-3" id="details-add-btn" aria-label="Add ${item.name[lang]} to cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     ${translations.addToCart}
@@ -332,8 +332,8 @@ export function createFavoritesPage(
 
   container.innerHTML = `
         <div class="flex items-center gap-4 mb-6">
-            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="fav-header-back-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="fav-header-back-btn" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
@@ -383,8 +383,8 @@ export function createAboutPage(lang, translations, onBack) {
 
   container.innerHTML = `
         <div class="flex items-center gap-4 mb-6">
-            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="about-back-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="about-back-btn" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
@@ -396,7 +396,7 @@ export function createAboutPage(lang, translations, onBack) {
 
         <div class="grid gap-6">
             <div class="relative overflow-hidden rounded-[2rem] shadow-2xl h-72 md:h-96 about-hero-card">
-                <img src="images/hero.png" class="w-full h-full object-cover">
+                <img src="images/maxresdefault.webp" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6 flex flex-col justify-end">
                     <span class="text-[11px] uppercase tracking-[0.3em] text-accent font-bold">Premium local menu</span>
                     <h3 class="mt-3 text-3xl font-bold text-white leading-tight">${translations.heroTitle}</h3>
