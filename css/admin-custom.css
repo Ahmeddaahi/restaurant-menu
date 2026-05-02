@@ -1,0 +1,87 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #31642D 0%, #4A8C45 100%);
+    --secondary-gradient: linear-gradient(135deg, #FF8A00 0%, #FFB258 100%);
+}
+
+body {
+    background-color: #F4F7F5;
+    color: #1A2F18;
+    overflow-x: hidden;
+    opacity: 0; /* Prevent FOUC */
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+}
+
+.btn-glow-primary {
+    background: var(--primary-gradient);
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(49, 100, 45, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glow-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(49, 100, 45, 0.4);
+}
+
+.btn-glow-secondary {
+    background: var(--secondary-gradient);
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(255, 138, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glow-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 138, 0, 0.4);
+}
+
+.sidebar-link.active {
+    background: rgba(49, 100, 45, 0.1);
+    color: #31642D;
+    border-right: 4px solid #31642D;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(49, 100, 45, 0.1);
+    border-radius: 10px;
+}
+
+.modal-backdrop {
+    background: rgba(26, 47, 24, 0.4);
+    backdrop-filter: blur(8px);
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+input:focus, textarea:focus, select:focus {
+    box-shadow: 0 0 0 4px rgba(49, 100, 45, 0.1) !important;
+    border-color: #31642D !important;
+}
+
+.shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
