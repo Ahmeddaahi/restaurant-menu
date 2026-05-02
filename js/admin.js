@@ -4,6 +4,10 @@
 
 import { supabase } from './supabase.js';
 
+// --- Cloudflare R2i Configuration ---
+const CF_WORKER_URL = 'https://r2-uploader.ahmedexga.workers.dev'; // Replace with your Worker URL
+const CF_AUTH_SECRET = 'NadiFood123!'; // Replace with your AUTH_SECRET from Worker settings
+
 // Application State
 const state = {
     menuData: [],
@@ -38,13 +42,13 @@ async function init() {
 
 async function fetchData() {
     // Show loading state if needed
-    
+
     // Fetch categories
     const { data: categories, error: catError } = await supabase
         .from('categories')
         .select('*')
         .order('name_en');
-    
+
     if (catError) console.error('Error fetching categories:', catError);
     state.categories = categories || [];
 
@@ -55,7 +59,7 @@ async function fetchData() {
         .order('created_at', { ascending: false });
 
     if (itemError) console.error('Error fetching items:', itemError);
-    
+
     // Map items to the format expected by the frontend
     state.menuData = (items || []).map(item => ({
         id: item.id,
@@ -241,20 +245,29 @@ window.handleSaveItem = async (e) => {
     let imageUrl = document.getElementById('image-url').value;
 
     try {
-        // Handle Image Upload
+        // Handle Image Upload (Cloudflare R2)
         if (imageFile) {
-            const fileName = `${Date.now()}_${imageFile.name}`;
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('menu-images')
-                .upload(fileName, imageFile);
+            const fileName = `${Date.now()}_${imageFile.name.replace(/\s+/g, '_')}`;
 
-            if (uploadError) throw uploadError;
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            formData.append('filename', fileName);
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('menu-images')
-                .getPublicUrl(fileName);
-            
-            imageUrl = publicUrl;
+            const response = await fetch(CF_WORKER_URL, {
+                method: 'POST',
+                headers: {
+                    'X-Auth-Token': CF_AUTH_SECRET
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Upload failed: ${errorText}`);
+            }
+
+            const uploadData = await response.json();
+            imageUrl = uploadData.url;
         }
 
         const itemData = {
@@ -298,7 +311,7 @@ window.deleteItem = async (id) => {
             .from('menu_items')
             .delete()
             .eq('id', id);
-        
+
         if (error) {
             alert('Error deleting item: ' + error.message);
         } else {
@@ -348,7 +361,7 @@ window.handleDeleteCategory = async (id) => {
             .from('categories')
             .delete()
             .eq('id', id);
-        
+
         if (error) {
             alert('Error deleting category: ' + error.message);
         } else {
