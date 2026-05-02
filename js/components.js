@@ -21,7 +21,8 @@ export function createItemCard(
             <img src="${item.image}" 
                  alt="${item.name[lang]}" 
                  class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
-                 loading="lazy" 
+                 loading="${index < 4 ? 'eager' : 'lazy'}" 
+                 fetchpriority="${index < 4 ? 'high' : 'auto'}"
                  decoding="async"
                  onload="this.parentElement.classList.add('loaded')">
             <button class="favorite-btn ${item.isFavorite ? "active" : ""}" id="fav-${item.id}" aria-label="${item.isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
