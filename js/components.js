@@ -439,14 +439,14 @@ export function createAboutPage(lang, translations, onBack) {
 
                 <div class="grid gap-6">
                     <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100">
-                        <img src="images/shahi_spiced_tea_1776859669091.png" class="w-full h-56 object-cover">
+                        <img src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=600" class="w-full h-56 object-cover">
                         <div class="p-5 space-y-3">
                             <h4 class="text-lg font-bold text-gray-900">Spiced Tradition</h4>
                             <p class="text-gray-500 text-sm leading-relaxed">Warm cups, authentic flavors, and a cozy café experience in every sip.</p>
                         </div>
                     </div>
                     <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100">
-                        <img src="images/injera_firfir_dish_1776858644046.png" class="w-full h-56 object-cover">
+                        <img src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&q=80&w=600" class="w-full h-56 object-cover">
                         <div class="p-5 space-y-3">
                             <h4 class="text-lg font-bold text-gray-900">Fresh Local Taste</h4>
                             <p class="text-gray-500 text-sm leading-relaxed">Inspired by local ingredients, crafted for bright and nourishing meals.</p>
