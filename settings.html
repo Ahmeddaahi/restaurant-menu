@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ratings and Reviews | Nadi's Fresh Juice</title>
+    <meta name="color-scheme" content="light">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom.css">
+
+    <!-- FOUC Prevention -->
+    <script>
+        document.documentElement.style.visibility = 'hidden';
+        window.addEventListener('DOMContentLoaded', () => {
+            document.documentElement.style.visibility = 'visible';
+            document.body.style.opacity = '1';
+        });
+    </script>
+    <noscript>
+        <style>
+            :root { visibility: visible !important; }
+            body { opacity: 1 !important; }
+        </style>
+    </noscript>
+
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .progress-bar-bg {
+            background-color: #e5e7eb;
+            height: 10px;
+            border-radius: 999px;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .progress-bar-fill {
+            background-color: #31642d;
+            height: 100%;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .star-btn {
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: #e5e7eb;
+        }
+        
+        .star-btn.active {
+            color: #f37021;
+            fill: #f37021;
+        }
+
+        .star-btn.hover {
+            color: #f37021;
+            opacity: 0.7;
+        }
+
+        .submit-btn {
+            background: #31642d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .submit-btn.loading .btn-content {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .submit-btn.loading .loader {
+            opacity: 1;
+            transform: translate(-50%, -50%) translateY(0);
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            animation: fadeInScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .avatar-circle {
+            background: #f3f4f6;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-[#F8F9FA] min-h-screen flex flex-col font-sans">
+    
+    <!-- Header -->
+    <header class="px-6 py-5 flex items-center justify-between bg-white sticky top-0 z-50 border-b border-gray-100">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="p-1 rounded-full hover:bg-gray-100 transition-all">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <h1 class="text-xl font-bold text-gray-900">Ratings and reviews</h1>
+        </div>
+        <a href="admin.html" class="p-2 rounded-xl text-gray-300 hover:text-primary transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        </a>
+    </header>
+
+    <main class="flex-grow p-6 space-y-10 max-w-2xl mx-auto w-full">
+        
+        <!-- Summary Section (Play Store Style) -->
+        <section class="grid grid-cols-1 md:grid-cols-[140px_1fr] gap-8 items-center">
+            <div class="text-center">
+                <h2 id="avg-rating-large" class="text-6xl font-black text-gray-900">0.0</h2>
+                <div class="flex justify-center gap-0.5 text-secondary mt-2" id="avg-stars-summary">
+                    <!-- Dynamic Stars -->
+                </div>
+                <p id="total-reviews-count" class="text-[10px] font-bold text-gray-400 mt-2">0 reviews</p>
+            </div>
+
+            <div class="space-y-1.5 flex-grow">
+                <!-- 5 Stars Bar -->
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-gray-700 w-2">5</span>
+                    <div class="progress-bar-bg"><div id="bar-5" class="progress-bar-fill"></div></div>
+                </div>
+                <!-- 4 Stars Bar -->
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-gray-700 w-2">4</span>
+                    <div class="progress-bar-bg"><div id="bar-4" class="progress-bar-fill"></div></div>
+                </div>
+                <!-- 3 Stars Bar -->
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-gray-700 w-2">3</span>
+                    <div class="progress-bar-bg"><div id="bar-3" class="progress-bar-fill"></div></div>
+                </div>
+                <!-- 2 Stars Bar -->
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-gray-700 w-2">2</span>
+                    <div class="progress-bar-bg"><div id="bar-2" class="progress-bar-fill"></div></div>
+                </div>
+                <!-- 1 Star Bar -->
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-gray-700 w-2">1</span>
+                    <div class="progress-bar-bg"><div id="bar-1" class="progress-bar-fill"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-gray-100">
+
+        <!-- Submission Section -->
+        <section class="space-y-6">
+            <div id="submission-trigger" class="flex flex-col items-center py-4 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <p class="text-sm font-bold text-gray-700 mb-4">Rate our fresh juice</p>
+                <div class="flex gap-4">
+                    <button type="button" class="star-btn p-1" onclick="openReviewForm(1)">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                    </button>
+                    <button type="button" class="star-btn p-1" onclick="openReviewForm(2)">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                    </button>
+                    <button type="button" class="star-btn p-1" onclick="openReviewForm(3)">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                    </button>
+                    <button type="button" class="star-btn p-1" onclick="openReviewForm(4)">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                    </button>
+                    <button type="button" class="star-btn p-1" onclick="openReviewForm(5)">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                    </button>
+                </div>
+                <button onclick="openReviewForm(5)" class="mt-4 text-primary text-xs font-bold hover:underline">Write a review</button>
+            </div>
+
+            <!-- Floating Form (Hidden by Default) -->
+            <div id="review-modal" class="hidden glass-card rounded-4xl p-8 space-y-6 animate-slide-up shadow-2xl border border-primary/10">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-lg font-bold text-gray-900">How was your juice?</h3>
+                    <button onclick="closeReviewForm()" class="text-gray-400 hover:text-red-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <form id="review-form" class="space-y-6">
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="flex gap-2" id="form-stars">
+                            <!-- Injected via JS -->
+                        </div>
+                        <span id="rating-label" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Select Rating</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Your Name</label>
+                        <input type="text" id="reviewer-name" required maxlength="50"
+                            class="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="e.g. Ahmed Daahi">
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center px-1">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Feedback Details</label>
+                            <span id="char-counter" class="text-[10px] font-bold text-gray-400">0/500</span>
+                        </div>
+                        <textarea id="feedback-text" maxlength="500" 
+                            class="w-full bg-gray-50/50 border border-gray-100 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all h-32 resize-none"
+                            placeholder="Share your experience..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="submit-btn w-full text-white py-4 rounded-2xl font-bold text-sm tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-95">
+                        <div class="btn-content">Submit Review</div>
+                        <div class="loader"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-state" class="success-message hidden text-center space-y-4 py-8">
+                <div class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">Posted!</h3>
+                    <p class="text-sm text-gray-500">Thanks for sharing your feedback.</p>
+                </div>
+                <button onclick="resetForm()" class="text-primary font-bold text-sm hover:underline">Write another</button>
+            </div>
+        </section>
+
+        <!-- Reviews List (Play Store Style) -->
+        <section class="space-y-8 pb-10" id="reviews-list">
+            <!-- Dynamic Reviews -->
+        </section>
+    </main>
+
+    <footer class="p-8 text-center bg-white border-t border-gray-100">
+        <p class="text-xs text-gray-400">© 2024 Nadi's Fresh Juice</p>
+    </footer>
+
+    <script type="module" src="js/settings.js"></script>
+</body>
+</html>
