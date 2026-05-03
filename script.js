@@ -32,7 +32,7 @@ const state = {
     categories: [], // To be filled from Supabase
     cart: initialCart,
     favorites: initialFavs,
-    currentView: 'menu' // 'menu', 'cart', 'details', 'about'
+    currentView: window.location.hash === '#about' ? 'about' : 'menu' // 'menu', 'cart', 'details', 'about'
 };
 
 /**
@@ -400,12 +400,18 @@ function renderCurrentView(data = null) {
     const bottomNav = document.querySelector('nav.fixed');
 
     // Reset visibility
-    if (header) header.style.display = 'flex';
-    if (main) main.style.display = 'block';
-    if (heroSection) heroSection.style.display = 'block';
-    if (categoryNav) categoryNav.style.display = 'block';
-    if (menuSection) menuSection.style.display = 'block';
-    if (bottomNav) bottomNav.style.display = 'flex';
+    // Set visibility based on view
+    const isMenu = state.currentView === 'menu';
+    const isAbout = state.currentView === 'about';
+    const isCart = state.currentView === 'cart';
+    const isDetails = state.currentView === 'details';
+
+    if (header) header.style.display = (isMenu) ? 'flex' : 'none';
+    if (main) main.style.display = (isMenu) ? 'block' : 'none';
+    if (heroSection) heroSection.style.display = isMenu ? 'block' : 'none';
+    if (categoryNav) categoryNav.style.display = isMenu ? 'block' : 'none';
+    if (menuSection) menuSection.style.display = isMenu ? 'block' : 'none';
+    if (bottomNav) bottomNav.style.display = isCart ? 'none' : 'flex';
 
     // Remove existing extra views
     const extraView = document.getElementById('extra-view');
@@ -418,7 +424,7 @@ function renderCurrentView(data = null) {
     const footerIcons = [
         document.getElementById('footer-home'),
         document.getElementById('footer-about'),
-        document.getElementById('footer-admin')
+        document.getElementById('footer-review')
     ].filter(el => el !== null);
 
     footerIcons.forEach(icon => {
@@ -432,17 +438,14 @@ function renderCurrentView(data = null) {
                 footerIcons[0].classList.add('text-primary');
                 footerIcons[0].classList.remove('text-gray-400');
             }
-            if (categoryNav) categoryNav.style.display = 'block';
-            if (menuSection) menuSection.style.display = 'block';
             renderCategories();
             applyFilters();
             window.scrollTo(0, 0);
             break;
 
         case 'cart':
-            if (header) header.style.display = 'none';
-            if (main) main.style.display = 'none';
-            if (bottomNav) bottomNav.style.display = 'none';
+            // Visibility already handled above
+
 
             const cartPage = document.createElement('div');
             cartPage.id = 'extra-view';
@@ -467,7 +470,7 @@ function renderCurrentView(data = null) {
             break;
 
         case 'details':
-            if (main) main.style.display = 'none';
+            // Visibility already handled above
             const detailsPage = createItemDetailsPage(
                 data,
                 currentLang,
@@ -484,8 +487,7 @@ function renderCurrentView(data = null) {
                 footerIcons[1].classList.add('text-primary');
                 footerIcons[1].classList.remove('text-gray-400');
             }
-            if (header) header.style.display = 'none';
-            if (main) main.style.display = 'none';
+            // Visibility already handled above
 
             const aboutPage = document.createElement('div');
             aboutPage.id = 'extra-view';
