@@ -1,7 +1,7 @@
 {
-  "name": "Nadi's Fresh Juice",
-  "short_name": "Nadi's",
-  "description": "Premium QR code menu for Nadi's Fresh Juice.",
+  "name": "Nadi Cafe",
+  "short_name": "Nadi Cafe",
+  "description": "Premium QR code menu for Nadi Cafe.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F8F9FA",
