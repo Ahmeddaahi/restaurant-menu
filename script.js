@@ -58,6 +58,7 @@ const state = {
     categories: [], // To be filled from Supabase
     cart: initialCart,
     favorites: initialFavs,
+    searchQuery: "",
     currentView: window.location.hash === '#about' ? 'about' : 'menu' // 'menu', 'cart', 'details', 'about'
 };
 
@@ -160,6 +161,47 @@ async function init() {
     if (footerHomeBtn) {
         footerHomeBtn.onclick = () => showView('menu');
     }
+
+    // Search Toggle
+    const searchBtn = document.getElementById('search-btn-header');
+    const closeSearchBtn = document.getElementById('close-search');
+    const searchInput = document.getElementById('main-search-input');
+
+    if (searchBtn) {
+        searchBtn.onclick = () => toggleSearch(true);
+    }
+    if (closeSearchBtn) {
+        closeSearchBtn.onclick = () => toggleSearch(false);
+    }
+    if (searchInput) {
+        searchInput.oninput = (e) => {
+            state.searchQuery = e.target.value;
+            applyFilters();
+        };
+    }
+}
+
+/**
+ * Toggle Search UI
+ */
+function toggleSearch(active) {
+    const hero = document.getElementById('hero-section');
+    const search = document.getElementById('search-section');
+    const input = document.getElementById('main-search-input');
+    
+    if (!hero || !search) return;
+
+    if (active) {
+        hero.style.display = 'none';
+        search.style.display = 'block';
+        if (input) input.focus();
+    } else {
+        hero.style.display = 'block';
+        search.style.display = 'none';
+        state.searchQuery = "";
+        if (input) input.value = "";
+        applyFilters();
+    }
 }
 
 /**
@@ -203,10 +245,16 @@ function filterCategory(category) {
  * Filter Logic
  */
 function applyFilters() {
-    const { activeCategory, menuData } = state;
+    const { activeCategory, menuData, searchQuery } = state;
+    const currentLang = translator.getLanguage();
 
     const filteredItems = menuData.filter(item => {
-        return activeCategory === "All" || item.category === activeCategory;
+        const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+        const query = searchQuery.toLowerCase();
+        const matchesSearch = !searchQuery || 
+            item.name.en.toLowerCase().includes(query) || 
+            item.name.so.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
     });
 
     renderMenu(filteredItems);
@@ -434,10 +482,19 @@ function renderCurrentView(data = null) {
 
     if (header) header.style.display = (isMenu) ? 'flex' : 'none';
     if (main) main.style.display = (isMenu) ? 'block' : 'none';
-    if (heroSection) heroSection.style.display = isMenu ? 'block' : 'none';
     if (categoryNav) categoryNav.style.display = isMenu ? 'block' : 'none';
     if (menuSection) menuSection.style.display = isMenu ? 'block' : 'none';
     if (bottomNav) bottomNav.style.display = isCart ? 'none' : 'flex';
+
+    // Search vs Hero mutually exclusive logic
+    if (isMenu) {
+        const isSearching = !!state.searchQuery;
+        if (heroSection) heroSection.style.display = isSearching ? 'none' : 'block';
+        if (searchSection) searchSection.style.display = isSearching ? 'block' : 'none';
+    } else {
+        if (heroSection) heroSection.style.display = 'none';
+        if (searchSection) searchSection.style.display = 'none';
+    }
 
     // Remove existing extra views
     const extraView = document.getElementById('extra-view');

@@ -80,8 +80,15 @@
                 <div id="lang-indicator" class="absolute top-1 left-1 w-[46px] h-7 rounded-xl shadow-md transition-all duration-300 ease-out z-0"></div>
                 
                 <button id="lang-so" aria-label="Switch to Somali" class="relative z-10 flex-1 flex items-center justify-center text-[11px] font-bold transition-colors duration-300">SO</button>
-                <button id="lang-en" aria-label="Switch to English" class="relative z-10 flex-1 flex items-center justify-center text-[11px] font-bold transition-colors duration-300">EN</button>
+                <button id="lang-en" aria-label="Switch to English" class="relative z-10 flex-1 flex-1 flex items-center justify-center text-[11px] font-bold transition-colors duration-300">EN</button>
             </div>
+
+            <button id="search-btn-header" aria-label="Search menu"
+                class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800 active:scale-90 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
 
             <div class="relative">
                 <button id="cart-btn-main" aria-label="View shopping cart"
@@ -98,6 +105,29 @@
     </header>
 
     <main class="pb-32" style="display: none;">
+        <!-- Search Section -->
+        <section id="search-section" class="px-6 py-2" style="display: none;">
+            <div class="relative h-44 rounded-[32px] overflow-hidden bg-white shadow-xl flex flex-col justify-center px-8 space-y-3 animate-slide-up">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-bold text-primary uppercase tracking-widest" data-translate="searchTitle">Search Menu</h2>
+                    <button id="close-search" class="text-gray-400 hover:text-red-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input type="text" id="main-search-input" 
+                        class="w-full h-14 bg-gray-50 rounded-2xl px-12 focus:outline-none border border-gray-100 text-sm" 
+                        data-translate-placeholder="searchPlaceholder"
+                        placeholder="Search for coffee, snacks...">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+
         <!-- Hero Section -->
         <section id="hero-section" class="px-6 py-2">
             <div class="relative h-44 rounded-[32px] overflow-hidden shadow-xl animate-slide-up">

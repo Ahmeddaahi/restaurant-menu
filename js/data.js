@@ -58,13 +58,14 @@ export const uiTranslations = {
         addToCart: "Dalbo",
         min: "daqiiqo",
         cartTitle: "Dalabkaaga",
-        total: "Warta Guud",
+        total: "Wadarta Guud",
         checkout: "Dalbo",
         emptyCart: "Dalabkaagu waa maran yahay",
         back: "Dib u laabo",
         items: "alaab",
         confirmCheckout: "Ma hubaal inaad rabto inaad dalbato?",
-        reviewTab: "Dib u eegis"
+        reviewTab: "Dib u eegis",
+        searchTitle: "Raadi Menu-ga"
     },
     en: {
         heroSubtitle: "From our kitchen to your heart",
@@ -96,7 +97,8 @@ export const uiTranslations = {
         back: "Back",
         items: "items",
         confirmCheckout: "Are you sure you want to checkout?",
-        reviewTab: "Review"
+        reviewTab: "Review",
+        searchTitle: "Search Menu"
     }
 }
     ;

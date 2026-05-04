@@ -7,9 +7,9 @@ import { uiTranslations } from './data.js';
 class TranslationManager {
     constructor() {
         try {
-            this.currentLang = localStorage.getItem('selectedLang') || 'so';
+            this.currentLang = localStorage.getItem('selectedLang') || 'en';
         } catch (e) {
-            this.currentLang = 'so';
+            this.currentLang = 'en';
         }
     }
 
@@ -41,6 +41,13 @@ class TranslationManager {
             const key = el.getAttribute('data-translate');
             if (t[key]) {
                 el.textContent = t[key];
+            }
+        });
+
+        document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-translate-placeholder');
+            if (t[key]) {
+                el.placeholder = t[key];
             }
         });
     }
