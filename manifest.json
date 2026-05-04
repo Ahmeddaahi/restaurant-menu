@@ -1,0 +1,21 @@
+{
+  "name": "Nadi's Fresh Juice",
+  "short_name": "Nadi's",
+  "description": "Premium QR code menu for Nadi's Fresh Juice.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#F8F9FA",
+  "icons": [
+    {
+      "src": "images/logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "images/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}
