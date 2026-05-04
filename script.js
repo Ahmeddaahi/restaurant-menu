@@ -480,6 +480,7 @@ function showView(view, data = null) {
 }
 
 function renderCurrentView(data = null) {
+    window.scrollTo(0, 0);
     const main = document.querySelector('main');
     const header = document.querySelector('header');
     const heroSection = document.getElementById('hero-section');
@@ -538,7 +539,6 @@ function renderCurrentView(data = null) {
             }
             renderCategories();
             applyFilters();
-            window.scrollTo(0, 0);
             break;
 
         case 'cart':
