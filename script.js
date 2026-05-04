@@ -179,6 +179,14 @@ async function init() {
             applyFilters();
         };
     }
+
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.onsubmit = (e) => {
+            e.preventDefault();
+            if (searchInput) searchInput.blur();
+        };
+    }
 }
 
 /**
