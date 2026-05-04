@@ -117,6 +117,19 @@
             justify-content: center;
             font-weight: 700;
         }
+
+        /* Fluid Typography */
+        .fluid-title {
+            font-size: clamp(1.5rem, 6vw, 2.25rem);
+            line-height: 1.2;
+        }
+        .fluid-rating {
+            font-size: clamp(3rem, 12vw, 4.5rem);
+            line-height: 1;
+        }
+        .fluid-subtitle {
+            font-size: clamp(0.75rem, 3vw, 0.875rem);
+        }
     </style>
 </head>
 <body class="bg-[#F8F9FA] min-h-screen flex flex-col font-sans">
@@ -133,19 +146,19 @@
                 </svg>
             </a>
             <div>
-                <p class="text-sm text-gray-500">Rate Our Service</p>
-                <h2 class="text-3xl font-bold text-gray-900">Ratings and reviews</h2>
+                <p class="fluid-subtitle text-gray-500">Rate Our Service</p>
+                <h2 class="fluid-title font-bold text-gray-900">Ratings and reviews</h2>
             </div>
         </div>
 
         <!-- Summary Section (Play Store Style) -->
         <section class="grid grid-cols-1 md:grid-cols-[140px_1fr] gap-8 items-center">
             <div class="text-center">
-                <h2 id="avg-rating-large" class="text-6xl font-black text-gray-900">0.0</h2>
+                <h2 id="avg-rating-large" class="fluid-rating font-black text-gray-900">0.0</h2>
                 <div class="flex justify-center gap-0.5 text-secondary mt-2" id="avg-stars-summary">
                     <!-- Dynamic Stars -->
                 </div>
-                <p id="total-reviews-count" class="text-[10px] font-bold text-gray-400 mt-2">0 reviews</p>
+                <p id="total-reviews-count" class="text-[clamp(10px,2.5vw,12px)] font-bold text-gray-400 mt-2">0 reviews</p>
             </div>
 
             <div class="space-y-1.5 flex-grow">
@@ -206,7 +219,7 @@
             <!-- Floating Form (Hidden by Default) -->
             <div id="review-modal" class="hidden glass-card rounded-4xl p-8 space-y-6 animate-slide-up shadow-2xl border border-primary/10">
                 <div class="flex justify-between items-start">
-                    <h3 class="text-lg font-bold text-gray-900">How was your juice?</h3>
+                    <h3 class="text-[clamp(1.125rem,4vw,1.5rem)] font-bold text-gray-900">How was your juice?</h3>
                     <button onclick="closeReviewForm()" class="text-gray-400 hover:text-red-500 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -217,11 +230,11 @@
                         <div class="flex gap-2" id="form-stars">
                             <!-- Injected via JS -->
                         </div>
-                        <span id="rating-label" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Select Rating</span>
+                        <span id="rating-label" class="text-[clamp(10px,2.5vw,12px)] font-bold text-gray-400 uppercase tracking-widest">Select Rating</span>
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Your Name</label>
+                        <label class="text-[clamp(9px,2vw,11px)] font-black text-gray-400 uppercase tracking-widest px-1">Your Name</label>
                         <input type="text" id="reviewer-name" required maxlength="50"
                             class="w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                             placeholder="e.g. Ahmed Daahi">
@@ -229,15 +242,15 @@
 
                     <div class="space-y-2">
                         <div class="flex justify-between items-center px-1">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Feedback Details</label>
-                            <span id="char-counter" class="text-[10px] font-bold text-gray-400">0/500</span>
+                            <label class="text-[clamp(9px,2vw,11px)] font-black text-gray-400 uppercase tracking-widest">Feedback Details</label>
+                            <span id="char-counter" class="text-[clamp(9px,2vw,11px)] font-bold text-gray-400">0/500</span>
                         </div>
                         <textarea id="feedback-text" maxlength="500" 
                             class="w-full bg-gray-50/50 border border-gray-100 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all h-32 resize-none"
                             placeholder="Share your experience..."></textarea>
                     </div>
 
-                    <button type="submit" id="submit-btn" class="submit-btn w-full text-white py-4 rounded-2xl font-bold text-sm tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-95">
+                    <button type="submit" id="submit-btn" class="submit-btn w-full text-white py-4 rounded-2xl font-bold text-[clamp(0.875rem,3vw,1rem)] tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-95">
                         <div class="btn-content">Submit Review</div>
                         <div class="loader"></div>
                     </button>
@@ -281,7 +294,7 @@
             </svg>
             <span class="text-[9px] font-bold uppercase tracking-tighter">About</span>
         </a>
-        <a href="settings.html" class="flex flex-col items-center gap-1 text-primary transition-all">
+        <a href="reviews.html" class="flex flex-col items-center gap-1 text-primary transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
             </svg>
@@ -289,6 +302,6 @@
         </a>
     </nav>
 
-    <script type="module" src="js/settings.js"></script>
+    <script type="module" src="js/reviews.js"></script>
 </body>
 </html>

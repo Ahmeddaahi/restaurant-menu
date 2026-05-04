@@ -184,11 +184,11 @@ document.addEventListener('DOMContentLoaded', () => {
             reviewsList.innerHTML = visibleReviews.map(review => `
                 <div class="space-y-4 animate-slide-up">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full avatar-circle text-sm">
+                        <div class="w-10 h-10 rounded-full avatar-circle text-[clamp(0.875rem,3vw,1rem)]">
                             ${review.name ? review.name.charAt(0).toUpperCase() : 'G'}
                         </div>
                         <div>
-                            <h4 class="text-sm font-bold text-gray-900">${review.name || 'Guest User'}</h4>
+                            <h4 class="text-[clamp(0.875rem,3vw,1rem)] font-bold text-gray-900">${review.name || 'Guest User'}</h4>
                             <div class="flex flex-col mt-0.5">
                                 <div class="flex items-center gap-2">
                                     <div class="flex gap-0.5 text-secondary">
@@ -198,15 +198,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                             </svg>
                                         `).join('')}
                                     </div>
-                                    <span class="text-[10px] text-gray-400 font-medium">${timeAgo(review.created_at)}</span>
+                                    <span class="text-[clamp(9px,2vw,11px)] text-gray-400 font-medium">${timeAgo(review.created_at)}</span>
                                 </div>
-                                <div class="text-[9px] font-black text-secondary uppercase tracking-widest mt-1">
+                                <div class="text-[clamp(8px,1.8vw,10px)] font-black text-secondary uppercase tracking-widest mt-1">
                                     Rated ${review.rating} out of 5
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600 leading-relaxed pl-14">
+                    <p class="text-[clamp(0.8125rem,2.5vw,0.9375rem)] text-gray-600 leading-relaxed pl-14">
                         ${review.feedback || '<span class="italic text-gray-300">No comment provided.</span>'}
                     </p>
                 </div>
