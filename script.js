@@ -2,10 +2,11 @@
  * Jua Café - Main Application Logic (Controller)
  */
 
-import { menuItems, uiTranslations, config } from './js/data.js';
+import { menuItems, uiTranslations, config, staffMembers } from './js/data.js';
 import { translator } from './js/translations.js';
-import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage } from './js/components.js';
+import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage, createReviewPage } from './js/components.js';
 import { supabase } from './js/supabase.js';
+import { initReviewLogic } from './js/reviews.js';
 
 
 /**
@@ -160,6 +161,12 @@ async function init() {
     const footerHomeBtn = document.getElementById('footer-home');
     if (footerHomeBtn) {
         footerHomeBtn.onclick = () => showView('menu');
+    }
+
+    // Review Button in Footer
+    const footerReviewBtn = document.getElementById('footer-review');
+    if (footerReviewBtn) {
+        footerReviewBtn.onclick = () => showView('review');
     }
 
     // Search Toggle
@@ -593,9 +600,28 @@ function renderCurrentView(data = null) {
             aboutPage.appendChild(createAboutPage(
                 currentLang,
                 translations,
+                staffMembers,
                 () => showView('menu')
             ));
             main.parentElement.appendChild(aboutPage);
+            break;
+
+        case 'review':
+            if (footerIcons[2]) {
+                footerIcons[2].classList.add('text-primary');
+                footerIcons[2].classList.remove('text-gray-400');
+            }
+            
+            const reviewPage = createReviewPage(
+                currentLang,
+                translations,
+                () => showView('menu')
+            );
+            reviewPage.id = 'extra-view';
+            main.parentElement.appendChild(reviewPage);
+            
+            // Initialize the review logic after the component is in the DOM
+            initReviewLogic(translations);
             break;
     }
 }

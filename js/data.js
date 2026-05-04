@@ -65,7 +65,35 @@ export const uiTranslations = {
         items: "alaab",
         confirmCheckout: "Ma hubaal inaad rabto inaad dalbato?",
         reviewTab: "Dib u eegis",
-        searchTitle: "Raadi Menu-ga"
+        searchTitle: "Raadi Menu-ga",
+        rateService: "Qiimee Adeegeena",
+        ratingsReviews: "Qiimeynta iyo faallooyinka",
+        reviewsCount: "faallooyin",
+        rateJuice: "Qiimee casiirkeena cusub",
+        writeReview: "Qor faallo",
+        howWasJuice: "Sidee ahaa casiirkaaga?",
+        selectRating: "Dooro Qiimeynta",
+        yourName: "Magacaaga",
+        namePlaceholder: "t.s. Axmed Daahi",
+        feedbackDetails: "Faahfaahinta Faallada",
+        feedbackPlaceholder: "La wadaag khibradaada...",
+        submitReview: "Gudbi Faallada",
+        posted: "Waa la soo gudbiyay!",
+        thanksFeedback: "Waad ku mahadsantahay la wadaagista ra'yigaaga.",
+        writeAnother: "Qor mid kale",
+        noReviews: "Wali ma jiraan wax faallooyin ah.",
+        ratedOutOf: "Lagu qiimeeyay 5-tii",
+        needsImprovement: "Wuxuu u baahan yahay horumarin",
+        fair: "Dhexdhexaad",
+        good: "Waqti fiican",
+        veryGood: "Aad u fiican",
+        excellent: "Aad iyo aad u fiican!",
+        meetOurStaff: "La Kulun Shaqaalaheena",
+        staffWaiters: "Adeegayaasha",
+        staffCooks: "Kariiyeyaasha",
+        staffHeadChef: "Maareeyaha Cuntada",
+        staffBarista: "Khabiirka Bunka",
+        staffWaitress: "Hogaanka Adeegayaasha"
     },
     en: {
         heroSubtitle: "From our kitchen to your heart",
@@ -98,7 +126,55 @@ export const uiTranslations = {
         items: "items",
         confirmCheckout: "Are you sure you want to checkout?",
         reviewTab: "Review",
-        searchTitle: "Search Menu"
+        searchTitle: "Search Menu",
+        rateService: "Rate Our Service",
+        ratingsReviews: "Ratings and reviews",
+        reviewsCount: "reviews",
+        rateJuice: "Rate our fresh juice",
+        writeReview: "Write a review",
+        howWasJuice: "How was your juice?",
+        selectRating: "Select Rating",
+        yourName: "Your Name",
+        namePlaceholder: "e.g. Ahmed Daahi",
+        feedbackDetails: "Feedback Details",
+        feedbackPlaceholder: "Share your experience...",
+        submitReview: "Submit Review",
+        posted: "Posted!",
+        thanksFeedback: "Thanks for sharing your feedback.",
+        writeAnother: "Write another",
+        noReviews: "No reviews yet.",
+        ratedOutOf: "out of 5",
+        needsImprovement: "Needs Improvement",
+        fair: "Fair",
+        good: "Good",
+        veryGood: "Very Good",
+        excellent: "Excellent!",
+        meetOurStaff: "Meet Our Staff",
+        staffWaiters: "Waiters",
+        staffCooks: "Cooks",
+        staffHeadChef: "Head Chef",
+        staffBarista: "Senior Barista",
+        staffWaitress: "Lead Waitress"
     }
-}
-    ;
+};
+
+export const staffMembers = [
+    {
+        name: "Chef Ahmed",
+        role: "staffHeadChef",
+        image: "https://images.unsplash.com/photo-1577219481152-bca4673df505?auto=format&fit=crop&q=80&w=300",
+        bio: { so: "10 sano oo khibrad u leh cuntooyinka dhaqanka iyo kuwa casriga ah.", en: "10 years of experience in traditional and modern cuisine." }
+    },
+    {
+        name: "Zahra",
+        role: "staffWaitress",
+        image: "https://images.unsplash.com/photo-1581299894007-aaa50297cf16?auto=format&fit=crop&q=80&w=300",
+        bio: { so: "Had iyo jeer u adeegta macaamiisha si dhoolacaddeyn leh.", en: "Always serving customers with a bright smile." }
+    },
+    {
+        name: "Khalid",
+        role: "staffBarista",
+        image: "https://images.unsplash.com/photo-1559511259-664653ea8c66?auto=format&fit=crop&q=80&w=300",
+        bio: { so: "Khabiir ku ah samaynta Bunka iyo smoothie-yada labeenta leh.", en: "Expert in making Jebena coffee and creamy smoothies." }
+    }
+];

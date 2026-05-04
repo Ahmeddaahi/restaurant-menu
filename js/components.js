@@ -298,14 +298,14 @@ export function createItemDetailsPage(
 }
 
 
-export function createAboutPage(lang, translations, onBack) {
+export function createAboutPage(lang, translations, staffMembers, onBack) {
   const container = document.createElement("div");
   container.className =
     "px-6 py-8 fade-in space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24";
 
   container.innerHTML = `
         <div class="flex items-center gap-4 mb-6">
-            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="about-back-btn" aria-label="Go back">
+            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800 transition-all hover:bg-gray-50 active:scale-90" id="about-back-btn" aria-label="Go back">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -316,7 +316,7 @@ export function createAboutPage(lang, translations, onBack) {
             </div>
         </div>
 
-        <div class="grid gap-6">
+        <div class="grid gap-12">
             <div class="relative overflow-hidden rounded-[2rem] shadow-2xl h-72 md:h-96 about-hero-card">
                 <img src="images/de44e0ea-d57c-44d7-8f91-24b0f07a46a0.webp" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6 flex flex-col justify-end">
@@ -376,6 +376,29 @@ export function createAboutPage(lang, translations, onBack) {
                 </div>
             </div>
 
+            <section class="space-y-10">
+                <div class="text-center">
+                    <p class="text-xs text-primary font-bold uppercase tracking-[0.4em]">${translations.meetOurStaff}</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mt-3">${translations.meetOurStaff}</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${staffMembers.map(member => `
+                        <div class="group bg-white rounded-[2.5rem] p-5 shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                            <div class="relative h-72 rounded-[2rem] overflow-hidden mb-6">
+                                <img src="${member.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            </div>
+                            <div class="px-2 pb-2">
+                                <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">${translations[member.role]}</span>
+                                <h4 class="text-xl font-bold text-gray-900 mt-1">${member.name}</h4>
+                                <p class="text-sm text-gray-500 mt-4 leading-relaxed">${member.bio[lang]}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </section>
+
             <div class="bg-white p-6 rounded-[2rem] shadow-xl border border-gray-100 space-y-6">
                 <div class="flex items-center justify-between gap-4">
                     <div>
@@ -431,3 +454,119 @@ export function createAboutPage(lang, translations, onBack) {
 
   return container;
 }
+
+export function createReviewPage(lang, translations, onBack) {
+    const container = document.createElement("div");
+    container.className = "px-6 py-8 fade-in space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24 max-w-2xl mx-auto w-full";
+
+    container.innerHTML = `
+        <div class="flex items-center gap-4 mb-6">
+            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800 transition-all hover:bg-gray-50" id="review-back-btn" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <div>
+                <p class="fluid-subtitle text-gray-500">${translations.rateService}</p>
+                <h2 class="fluid-title font-bold text-gray-900">${translations.ratingsReviews}</h2>
+            </div>
+        </div>
+
+        <section class="grid grid-cols-1 md:grid-cols-[140px_1fr] gap-8 items-center">
+            <div class="text-center">
+                <h2 id="avg-rating-large" class="fluid-rating font-black text-gray-900">0.0</h2>
+                <div class="flex justify-center gap-0.5 text-secondary mt-2" id="avg-stars-summary">
+                </div>
+                <p id="total-reviews-count" class="fluid-subtitle font-bold text-gray-400 mt-2">0 ${translations.reviewsCount}</p>
+            </div>
+
+            <div class="space-y-1.5 flex-grow">
+                ${[5, 4, 3, 2, 1].map(i => `
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs font-bold text-gray-700 w-2">${i}</span>
+                        <div class="progress-bar-bg"><div id="bar-${i}" class="progress-bar-fill"></div></div>
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+
+        <hr class="border-gray-100">
+
+        <section class="space-y-6">
+            <div id="submission-trigger" class="flex flex-col items-center py-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <p class="text-sm font-bold text-gray-700 mb-4">${translations.rateJuice}</p>
+                <div class="flex gap-4">
+                    ${[1, 2, 3, 4, 5].map(i => `
+                        <button type="button" class="star-btn-trigger star-btn p-1" data-value="${i}">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                        </button>
+                    `).join('')}
+                </div>
+                <button id="write-review-text-btn" class="mt-4 text-primary text-xs font-bold hover:underline">${translations.writeReview}</button>
+            </div>
+
+            <div id="review-modal" class="hidden glass-card rounded-[2.5rem] p-8 space-y-6 animate-slide-up shadow-2xl border border-white/30">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-gray-900">${translations.howWasJuice}</h3>
+                    <button id="close-review-modal" class="text-gray-400 hover:text-red-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <form id="review-form" class="space-y-6">
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="flex gap-2" id="form-stars">
+                        </div>
+                        <span id="rating-label" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${translations.selectRating}</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">${translations.yourName}</label>
+                        <input type="text" id="reviewer-name" required maxlength="50"
+                            class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="${translations.namePlaceholder}">
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center px-1">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">${translations.feedbackDetails}</label>
+                            <span id="char-counter" class="text-[10px] font-bold text-gray-400">0/500</span>
+                        </div>
+                        <textarea id="feedback-text" maxlength="500" 
+                            class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all h-32 resize-none"
+                            placeholder="${translations.feedbackPlaceholder}"></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="submit-btn w-full text-white py-4 rounded-2xl font-bold text-base tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-95">
+                        <div class="btn-content">${translations.submitReview}</div>
+                        <div class="loader-review"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div id="success-state" class="success-message hidden text-center space-y-4 py-8">
+                <div class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">${translations.posted}</h3>
+                    <p class="text-sm text-gray-500">${translations.thanksFeedback}</p>
+                </div>
+                <button id="write-another-btn" class="text-primary font-bold text-sm hover:underline">${translations.writeAnother}</button>
+            </div>
+        </section>
+
+        <section class="space-y-8 pb-10" id="reviews-list">
+            <div class="flex justify-center py-10">
+                <div class="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            </div>
+        </section>
+    `;
+
+    container.querySelector("#review-back-btn").onclick = onBack;
+    
+    return container;
+}
+

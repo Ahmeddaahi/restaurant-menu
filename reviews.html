@@ -302,6 +302,11 @@
         </a>
     </nav>
 
-    <script type="module" src="js/reviews.js"></script>
+    <script type="module">
+        import { initReviewLogic } from './js/reviews.js';
+        import { uiTranslations } from './js/data.js';
+        const lang = localStorage.getItem('selectedLang') || 'en';
+        initReviewLogic(uiTranslations[lang]);
+    </script>
 </body>
 </html>
