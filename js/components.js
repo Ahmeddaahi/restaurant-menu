@@ -9,6 +9,7 @@ export function createItemCard(
   translations,
   onAddToCart,
   onShowDetails,
+  onToggleFavorite
 ) {
   const card = document.createElement("div");
   card.className = `item-card flex flex-col fade-in cursor-pointer`;
@@ -296,86 +297,6 @@ export function createItemDetailsPage(
   return container;
 }
 
-export function createFavoritesPage(
-  favoriteItems,
-  lang,
-  translations,
-  onToggleFavorite,
-  onAddToCart,
-  onBack,
-) {
-  const container = document.createElement("div");
-  container.className = "px-6 fade-in space-y-6";
-
-  let itemsHtml = "";
-  if (favoriteItems.length === 0) {
-    itemsHtml = `
-            <div class="flex flex-col items-center justify-center py-20 text-gray-400 space-y-4">
-                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                </div>
-                <p class="font-medium">${translations.favoritesTab} is empty</p>
-                <button class="text-primary font-bold" id="fav-back-btn-empty">${translations.back}</button>
-            </div>
-        `;
-  } else {
-    itemsHtml = `
-            <div class="grid grid-cols-2 gap-x-4 gap-y-6" id="fav-grid">
-                <!-- Items will be injected here -->
-            </div>
-            <button class="w-full text-gray-500 font-bold py-8" id="fav-back-btn">
-                ${translations.back}
-            </button>
-        `;
-  }
-
-  container.innerHTML = `
-        <div class="flex items-center gap-4 mb-6">
-            <button class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-800" id="fav-header-back-btn" aria-label="Go back">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-            </button>
-            <h2 class="text-2xl font-bold text-gray-900">${translations.favoritesTab}</h2>
-        </div>
-        <div id="fav-content">
-            ${itemsHtml}
-        </div>
-    `;
-
-  if (favoriteItems.length > 0) {
-    const grid = container.querySelector("#fav-grid");
-    favoriteItems.forEach((item, index) => {
-      const card = createItemCard(
-        { ...item, isFavorite: true },
-        lang,
-        index,
-        translations,
-        onAddToCart,
-        () => {},
-      );
-      // Re-bind favorite toggle to refresh view
-      const favBtn = card.querySelector(".favorite-btn");
-      favBtn.onclick = (e) => {
-        e.stopPropagation();
-        onToggleFavorite(item);
-      };
-      grid.appendChild(card);
-    });
-  }
-
-  const backBtn = container.querySelector("#fav-back-btn");
-  const backBtnHeader = container.querySelector("#fav-header-back-btn");
-  const backBtnEmpty = container.querySelector("#fav-back-btn-empty");
-
-  if (backBtn) backBtn.onclick = onBack;
-  if (backBtnHeader) backBtnHeader.onclick = onBack;
-  if (backBtnEmpty) backBtnEmpty.onclick = onBack;
-
-  return container;
-}
 
 export function createAboutPage(lang, translations, onBack) {
   const container = document.createElement("div");

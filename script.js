@@ -2,21 +2,19 @@
  * Jua Café - Main Application Logic (Controller)
  */
 
-import { menuItems, uiTranslations } from './js/data.js';
+import { menuItems, uiTranslations, config } from './js/data.js';
 import { translator } from './js/translations.js';
 import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage } from './js/components.js';
 import { supabase } from './js/supabase.js';
 
-// Configuration
-const RESTAURANT_PHONE = "251915745157"; // Business WhatsApp number
 
 /**
  * Format cart items into a WhatsApp-friendly message
  */
 function formatWhatsAppMessage(cart, lang, translations) {
     const greeting = lang === 'so' 
-        ? "Asc, Casiirka Cusub ee Nadi's! Waxaan rabaa inaan dalbado:" 
-        : "Hi Nadi's Fresh Juice! I would like to order:";
+        ? `Asc, ${config.name}! Waxaan rabaa inaan dalbado:` 
+        : `Hi ${config.name}! I would like to order:`;
     
     const totalLabel = translations.total || "Total";
     const currency = translations.currency || "ETB";
@@ -258,7 +256,7 @@ function renderMenu(items) {
                 img.onload = () => img.parentElement.classList.add('loaded');
                 img.onerror = () => {
                     img.parentElement.classList.add('loaded', 'error');
-                    img.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300';
+                    img.src = config.fallbackImage;
                 };
             }
         });
@@ -489,7 +487,7 @@ function renderCurrentView(data = null) {
                         // Generate WhatsApp message
                         const message = formatWhatsAppMessage(state.cart, currentLang, translations);
                         const encodedMessage = encodeURIComponent(message);
-                        const whatsappUrl = `https://wa.me/${RESTAURANT_PHONE}?text=${encodedMessage}`;
+                        const whatsappUrl = `https://wa.me/${config.phone}?text=${encodedMessage}`;
                         
                         // Open WhatsApp
                         window.open(whatsappUrl, '_blank');
