@@ -134,7 +134,7 @@ export function createCartPage(
                             <h4 class="text-base font-bold text-gray-900">${item.name[lang]}</h4>
                             <p class="text-sm text-gray-500 mt-1">${item.quantity} × ${translations.currency} ${item.price}</p>
                         </div>
-                        <button class="text-gray-400 hover:text-primary transition-colors" aria-label="Remove ${item.name[lang]} from cart" onclick="this.dispatchEvent(new CustomEvent('remove-item', {bubbles: true, detail: ${item.id}}))">
+                        <button class="text-gray-400 hover:text-primary transition-colors" aria-label="Remove ${item.name[lang]} from cart" onclick="this.dispatchEvent(new CustomEvent('remove-item', {bubbles: true, detail: '${item.id}'}))">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -143,9 +143,9 @@ export function createCartPage(
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <span class="text-primary font-semibold text-lg">${translations.currency} ${(item.price * item.quantity).toFixed(2)}</span>
                         <div class="flex items-center gap-2 bg-gray-100 rounded-full p-1.5">
-                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" aria-label="Decrease quantity" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: -1}}))">-</button>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" aria-label="Decrease quantity" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: '${item.id}', delta: -1}}))">-</button>
                             <span class="w-10 text-center text-sm font-semibold">${item.quantity}</span>
-                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" aria-label="Increase quantity" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: ${item.id}, delta: 1}}))">+</button>
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition-colors" aria-label="Increase quantity" onclick="this.dispatchEvent(new CustomEvent('update-qty', {bubbles: true, detail: {id: '${item.id}', delta: 1}}))">+</button>
                         </div>
                     </div>
                 </div>
@@ -397,7 +397,7 @@ export function createAboutPage(lang, translations, onBack) {
 
         <div class="grid gap-6">
             <div class="relative overflow-hidden rounded-[2rem] shadow-2xl h-72 md:h-96 about-hero-card">
-                <img src="images/maxresdefault.webp" class="w-full h-full object-cover">
+                <img src="images/de44e0ea-d57c-44d7-8f91-24b0f07a46a0.webp" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6 flex flex-col justify-end">
                     <span class="text-[11px] uppercase tracking-[0.3em] text-accent font-bold">Premium local menu</span>
                     <h3 class="mt-3 text-3xl font-bold text-white leading-tight">${translations.heroTitle}</h3>

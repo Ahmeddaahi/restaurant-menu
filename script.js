@@ -7,6 +7,34 @@ import { translator } from './js/translations.js';
 import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage } from './js/components.js';
 import { supabase } from './js/supabase.js';
 
+// Configuration
+const RESTAURANT_PHONE = "251915745157"; // Business WhatsApp number
+
+/**
+ * Format cart items into a WhatsApp-friendly message
+ */
+function formatWhatsAppMessage(cart, lang, translations) {
+    const greeting = lang === 'so' 
+        ? "Asc, Casiirka Cusub ee Nadi's! Waxaan rabaa inaan dalbado:" 
+        : "Hi Nadi's Fresh Juice! I would like to order:";
+    
+    const totalLabel = translations.total || "Total";
+    const currency = translations.currency || "ETB";
+
+    let itemsList = cart.map(item => {
+        return `• ${item.quantity}x ${item.name[lang]} - ${currency} ${(item.price * item.quantity).toFixed(2)}`;
+    }).join('\n');
+
+    const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    const footer = lang === 'so'
+        ? "\n\nFadlan ii xaqiiji dalabkan. Mahadsanid!"
+        : "\n\nPlease confirm my order. Thank you!";
+    
+    return `${greeting}\n\n${itemsList}\n\n*${totalLabel}: ${currency} ${grandTotal.toFixed(2)}*${footer}`;
+}
+
+
 // Load cart from localStorage
 const savedCart = localStorage.getItem('cart');
 const initialCart = savedCart ? JSON.parse(savedCart) : [];
@@ -323,11 +351,11 @@ function animateFlyToCart(sourceImg, callback) {
 }
 
 function updateCartQty(id, delta) {
-    const item = state.cart.find(i => i.id === id);
+    const item = state.cart.find(i => String(i.id) === String(id));
     if (item) {
         item.quantity += delta;
         if (item.quantity <= 0) {
-            state.cart = state.cart.filter(i => i.id !== id);
+            state.cart = state.cart.filter(i => String(i.id) !== String(id));
         }
     }
     saveCart();
@@ -336,7 +364,7 @@ function updateCartQty(id, delta) {
 }
 
 function removeFromCart(id) {
-    state.cart = state.cart.filter(i => i.id !== id);
+    state.cart = state.cart.filter(i => String(i.id) !== String(id));
     saveCart();
     updateCartBadge();
     if (state.currentView === 'cart') showView('cart');
@@ -458,11 +486,19 @@ function renderCurrentView(data = null) {
                 () => showView('menu'),
                 () => {
                     if (confirm(translations.confirmCheckout)) {
+                        // Generate WhatsApp message
+                        const message = formatWhatsAppMessage(state.cart, currentLang, translations);
+                        const encodedMessage = encodeURIComponent(message);
+                        const whatsappUrl = `https://wa.me/${RESTAURANT_PHONE}?text=${encodedMessage}`;
+                        
+                        // Open WhatsApp
+                        window.open(whatsappUrl, '_blank');
+
+                        // Clear cart locally
                         state.cart = [];
                         saveCart();
                         updateCartBadge();
                         showView('menu');
-                        alert("Thank you for your order!");
                     }
                 }
             ));
