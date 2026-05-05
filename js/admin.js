@@ -50,6 +50,42 @@ async function init() {
     window.addEventListener('beforeunload', () => {
         authListener.subscription.unsubscribe();
     });
+
+    // --- Image Upload UI Feedback ---
+    const imageFileInput = document.getElementById('image-file');
+    if (imageFileInput) {
+        imageFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                updateImageUploadUI(true, file.name);
+            } else {
+                updateImageUploadUI(false);
+            }
+        });
+    }
+}
+
+function updateImageUploadUI(isSelected, fileName = '') {
+    const defaultIcon = document.getElementById('default-upload-icon');
+    const confirmedIcon = document.getElementById('confirmed-upload-icon');
+    const uploadText = document.getElementById('upload-text');
+    const container = document.getElementById('image-upload-container');
+
+    if (isSelected) {
+        defaultIcon.classList.add('hidden');
+        confirmedIcon.classList.remove('hidden');
+        uploadText.textContent = 'Image Ready';
+        uploadText.classList.replace('text-gray-600', 'text-green-600');
+        container.classList.replace('border-gray-100', 'border-green-100');
+        container.classList.add('bg-green-50/30');
+    } else {
+        defaultIcon.classList.remove('hidden');
+        confirmedIcon.classList.add('hidden');
+        uploadText.textContent = 'Upload Image';
+        uploadText.classList.replace('text-green-600', 'text-gray-600');
+        container.classList.replace('border-green-100', 'border-gray-100');
+        container.classList.remove('bg-green-50/30');
+    }
 }
 
 async function fetchData() {
@@ -231,6 +267,9 @@ window.openModal = (id = null) => {
     } else {
         title.textContent = 'Add New Item';
     }
+
+    // Reset Image Upload UI
+    updateImageUploadUI(false);
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
