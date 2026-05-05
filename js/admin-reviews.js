@@ -32,12 +32,15 @@ export async function renderAdminReviews() {
         list.innerHTML = reviews.map(review => `
             <tr class="hover:bg-gray-50/50 transition-colors">
                 <td class="px-8 py-5">
-                    <div class="flex gap-0.5 text-secondary">
-                        ${Array(5).fill(0).map((_, i) => `
-                            <svg class="w-3 h-3 ${i < review.rating ? 'fill-current' : 'text-gray-200'}" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-                            </svg>
-                        `).join('')}
+                    <div class="flex items-center gap-2">
+                        <div class="flex gap-0.5">
+                            ${Array(5).fill(0).map((_, i) => `
+                                <svg class="w-3.5 h-3.5 ${i < Math.floor(review.rating) ? 'text-secondary' : 'text-gray-200'}" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                                </svg>
+                            `).join('')}
+                        </div>
+                        <span class="text-[10px] font-black text-gray-400">${Number(review.rating).toFixed(1)}</span>
                     </div>
                 </td>
                 <td class="px-8 py-5">
