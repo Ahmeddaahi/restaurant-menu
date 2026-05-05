@@ -382,17 +382,22 @@
             document.querySelectorAll('.section-content').forEach(s => s.classList.add('hidden'));
             // Show target section
             document.getElementById(sectionId).classList.remove('hidden');
-            
+
             // Update sidebar links
             document.querySelectorAll('.sidebar-link').forEach(l => {
                 l.classList.remove('active', 'bg-primary/5', 'text-primary');
                 l.classList.add('text-gray-400');
             });
-            
+
             const activeLink = document.getElementById(sectionId === 'items-section' ? 'link-items' : 'link-reviews');
             if (activeLink) {
                 activeLink.classList.add('active', 'bg-primary/5', 'text-primary');
                 activeLink.classList.remove('text-gray-400');
+            }
+
+            // Lazy-load reviews only when the Reviews tab is opened
+            if (sectionId === 'reviews-section' && typeof window.renderAdminReviews === 'function') {
+                window.renderAdminReviews();
             }
 
             // Close mobile menu if open

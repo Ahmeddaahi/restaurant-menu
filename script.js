@@ -64,18 +64,34 @@ const state = {
 };
 
 /**
- * Fetch Data from Supabase
+ * Fetch Data from Supabase with sessionStorage cache (5-min TTL)
  */
+const MENU_CACHE_KEY = 'nadicafe_menu_v1';
+const MENU_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 async function fetchSupabaseData() {
-    // Fetch categories
+    // Try reading from cache first (localStorage so admin changes can bust it)
+    try {
+        const cached = localStorage.getItem(MENU_CACHE_KEY);
+        if (cached) {
+            const { data, timestamp } = JSON.parse(cached);
+            if (Date.now() - timestamp < MENU_CACHE_TTL) {
+                state.categories = data.categories;
+                state.menuData = data.menuData;
+                renderCurrentView();
+                return; // Skip Supabase call entirely
+            }
+        }
+    } catch (_) { /* cache unreadable, fall through to fetch */ }
+
+    // Fetch categories — only the columns we use
     const { data: categories, error: catError } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name_en, name_so')
         .order('name_en');
-    
+
     if (catError) {
         console.error('Error fetching categories:', catError);
-        // Fallback to static if needed or show error
     } else {
         state.categories = [
             { id: "All", so: "Dhammaan", en: "All" },
@@ -83,15 +99,15 @@ async function fetchSupabaseData() {
         ];
     }
 
-    // Fetch menu items
+    // Fetch menu items — only the columns we use
     const { data: items, error: itemError } = await supabase
         .from('menu_items')
-        .select('*')
+        .select('id, name_en, name_so, category_id, price, image_url, description_en, description_so, is_popular, rating, prep_time')
         .order('created_at', { ascending: false });
 
     if (itemError) {
         console.error('Error fetching items:', itemError);
-        state.menuData = menuItems; // Fallback to static
+        state.menuData = menuItems; // Fallback to static data
     } else {
         state.menuData = items.map(item => ({
             id: item.id,
@@ -105,6 +121,14 @@ async function fetchSupabaseData() {
             prepTime: item.prep_time
         }));
     }
+
+    // Persist to cache
+    try {
+        localStorage.setItem(MENU_CACHE_KEY, JSON.stringify({
+            data: { categories: state.categories, menuData: state.menuData },
+            timestamp: Date.now()
+        }));
+    } catch (_) { /* storage full — continue without caching */ }
 
     renderCurrentView();
 }
@@ -127,11 +151,17 @@ window.switchLanguage = (lang) => {
  */
 async function init() {
     updateCartBadge();
-    
-    // Initial render with loading state or static fallback
-    renderCurrentView();
-    
-    // Fetch fresh data from Supabase
+
+    // Show a lightweight spinner in the menu grid while data loads
+    // (avoids a full double-render cycle)
+    const grid = document.getElementById('menu-grid');
+    if (grid && state.currentView === 'menu') {
+        grid.innerHTML = `<div class="col-span-2 flex justify-center py-20">
+            <div class="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        </div>`;
+    }
+
+    // Fetch data (uses cache when available) then renders the view
     await fetchSupabaseData();
 
     translator.updateStaticText();

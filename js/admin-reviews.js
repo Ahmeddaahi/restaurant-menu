@@ -1,7 +1,5 @@
 import { supabase } from './supabase.js';
 
-console.log('--- ADMIN REVIEWS SCRIPT LOADED ---');
-
 /**
  * Render all reviews in the admin panel
  */
@@ -14,12 +12,11 @@ export async function renderAdminReviews() {
     try {
         const { data: reviews, error } = await supabase
             .from('reviews')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('id, rating, name, feedback, created_at, hidden')
+            .order('created_at', { ascending: false })
+            .limit(100);
 
         if (error) throw error;
-        
-        console.log(`Fetched ${reviews.length} reviews`);
 
         const avg = reviews.length > 0 
             ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
@@ -71,14 +68,12 @@ export async function renderAdminReviews() {
     }
 }
 
-// Global Event Listener
+// Global Event Listener for delete
 document.addEventListener('click', async (e) => {
-    // Delete
     const deleteBtn = e.target.closest('.review-delete-btn');
     if (deleteBtn) {
         e.preventDefault();
         const id = deleteBtn.dataset.id;
-        console.log('Delete clicked', id);
         
         if (confirm('Permanently delete this review?')) {
             try {
@@ -91,10 +86,8 @@ document.addEventListener('click', async (e) => {
                 if (error) throw error;
 
                 if (!data || data.length === 0) {
-                    console.warn('Delete successful but 0 rows affected. Check Supabase RLS policies.');
-                    alert('Permission Denied: You might need to add an RLS policy in Supabase for "authenticated" users to DELETE from the reviews table.');
+                    alert('Permission Denied: Check Supabase RLS policies for authenticated DELETE on reviews.');
                 } else {
-                    console.log('Delete successful');
                     await renderAdminReviews();
                 }
             } catch (err) {
@@ -105,11 +98,5 @@ document.addEventListener('click', async (e) => {
     }
 });
 
-// Initial load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderAdminReviews);
-} else {
-    renderAdminReviews();
-}
-
+// Exposed for lazy load from showSection in admin.html
 window.renderAdminReviews = renderAdminReviews;

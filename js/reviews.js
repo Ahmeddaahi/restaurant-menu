@@ -1,5 +1,8 @@
 import { supabase } from './supabase.js';
 
+// Module-level cache so we can append locally without re-fetching
+let cachedReviews = [];
+
 export async function initReviewLogic(translations) {
     const reviewsList = document.getElementById('reviews-list');
     const avgRatingLarge = document.getElementById('avg-rating-large');
@@ -28,30 +31,101 @@ export async function initReviewLogic(translations) {
         5: translations.excellent
     };
 
-    // Initialize UI
+    // Initial load
     await loadReviews();
 
-    // Star distribution bars
+    // --- Star distribution bars ---
     function updateBars(reviews) {
         const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        reviews.forEach(r => {
-            if (counts[r.rating] !== undefined) counts[r.rating]++;
-        });
-        
+        reviews.forEach(r => { if (counts[r.rating] !== undefined) counts[r.rating]++; });
         const total = reviews.length || 1;
         for (let i = 1; i <= 5; i++) {
-            const percentage = (counts[i] / total) * 100;
             const bar = document.getElementById(`bar-${i}`);
-            if (bar) bar.style.width = `${percentage}%`;
+            if (bar) bar.style.width = `${(counts[i] / total) * 100}%`;
         }
     }
 
+    // --- Render reviews from a local array (no network call) ---
+    function renderReviewUI(reviews) {
+        const avg = reviews.length > 0
+            ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+            : '0.0';
+
+        if (avgRatingLarge) avgRatingLarge.textContent = avg;
+        if (totalReviewsCount) totalReviewsCount.textContent = `${reviews.length} ${translations.reviewsCount}`;
+
+        if (avgStarsSummary) {
+            avgStarsSummary.innerHTML = Array(5).fill(0).map((_, i) => `
+                <svg class="w-3 h-3 ${i < Math.round(avg) ? 'text-secondary' : 'text-gray-200'}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                </svg>
+            `).join('');
+        }
+
+        updateBars(reviews);
+
+        if (reviews.length === 0) {
+            reviewsList.innerHTML = `<p class="text-center text-gray-400 italic py-10">${translations.noReviews}</p>`;
+            return;
+        }
+
+        reviewsList.innerHTML = reviews.map(review => `
+            <div class="space-y-4 animate-slide-up">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full avatar-circle text-[clamp(0.875rem,3vw,1rem)]">
+                        ${review.name ? review.name.charAt(0).toUpperCase() : 'G'}
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">${review.name || 'Guest User'}</h4>
+                        <div class="flex flex-col mt-0.5">
+                            <div class="flex items-center gap-2">
+                                <div class="flex gap-0.5 text-secondary">
+                                    ${Array(5).fill(0).map((_, i) => `
+                                        <svg class="w-3 h-3 ${i < review.rating ? 'fill-current' : 'text-gray-300'}" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                                        </svg>
+                                    `).join('')}
+                                </div>
+                                <span class="text-[10px] text-gray-400 font-medium">${timeAgo(review.created_at)}</span>
+                            </div>
+                            <div class="text-[9px] font-black text-secondary uppercase tracking-widest mt-1">
+                                Rated ${review.rating} ${translations.ratedOutOf}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 leading-relaxed pl-14">
+                    ${review.feedback || `<span class="italic text-gray-300">${translations.noReviews}</span>`}
+                </p>
+            </div>
+        `).join('');
+    }
+
+    // --- Fetch from Supabase, server-side filter hidden reviews ---
+    async function loadReviews() {
+        try {
+            const { data: reviews, error } = await supabase
+                .from('reviews')
+                .select('id, rating, name, feedback, created_at')
+                .eq('hidden', false)
+                .order('created_at', { ascending: false })
+                .limit(30);
+
+            if (error) throw error;
+
+            cachedReviews = reviews;
+            renderReviewUI(cachedReviews);
+        } catch (err) {
+            console.error('Error loading reviews:', err);
+        }
+    }
+
+    // --- Review Form ---
     const openReviewForm = function(val = 0) {
         submissionTrigger.classList.add('hidden');
         reviewModal.classList.remove('hidden');
         successState.classList.add('hidden');
-        
-        // Initialize form stars
+
         formStars.innerHTML = Array(5).fill(0).map((_, i) => `
             <button type="button" class="star-btn p-1" data-value="${i + 1}">
                 <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
@@ -65,12 +139,10 @@ export async function initReviewLogic(translations) {
                 highlightStars(v, true);
                 ratingLabel.textContent = ratingTexts[v];
             });
-
             star.addEventListener('mouseleave', () => {
                 highlightStars(currentRating);
                 ratingLabel.textContent = ratingTexts[currentRating];
             });
-
             star.addEventListener('click', () => {
                 currentRating = parseInt(star.dataset.value);
                 highlightStars(currentRating);
@@ -106,8 +178,7 @@ export async function initReviewLogic(translations) {
     }
 
     // Bind triggers
-    const starTriggers = document.querySelectorAll('.star-btn-trigger');
-    starTriggers.forEach(btn => {
+    document.querySelectorAll('.star-btn-trigger').forEach(btn => {
         btn.onclick = () => openReviewForm(parseInt(btn.dataset.value));
     });
 
@@ -131,7 +202,7 @@ export async function initReviewLogic(translations) {
         charCounter.textContent = `${feedbackText.value.length}/500`;
     });
 
-    // Form Submission
+    // --- Form Submission: insert then update LOCAL cache (no re-fetch) ---
     reviewForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (currentRating === 0) return;
@@ -139,13 +210,21 @@ export async function initReviewLogic(translations) {
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
 
+        const newReview = {
+            id: `local-${Date.now()}`,
+            rating: currentRating,
+            feedback: feedbackText.value,
+            name: reviewerName.value,
+            created_at: new Date().toISOString()
+        };
+
         try {
             const { error } = await supabase
                 .from('reviews')
                 .insert([{
-                    rating: currentRating,
-                    feedback: feedbackText.value,
-                    name: reviewerName.value,
+                    rating: newReview.rating,
+                    feedback: newReview.feedback,
+                    name: newReview.name,
                     hidden: false
                 }]);
 
@@ -153,7 +232,10 @@ export async function initReviewLogic(translations) {
 
             reviewModal.classList.add('hidden');
             successState.classList.remove('hidden');
-            await loadReviews();
+
+            // Prepend to local cache and re-render — no extra network call
+            cachedReviews.unshift(newReview);
+            renderReviewUI(cachedReviews);
         } catch (err) {
             console.error('Submission error:', err);
             alert('Could not submit review. Please try again.');
@@ -162,75 +244,6 @@ export async function initReviewLogic(translations) {
             submitBtn.disabled = false;
         }
     });
-
-    async function loadReviews() {
-        try {
-            const { data: reviews, error } = await supabase
-                .from('reviews')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-
-            if (error) throw error;
-
-            const visibleReviews = reviews.filter(r => !r.hidden);
-            
-            // Update Stats
-            const avg = reviews.length > 0 
-                ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-                : '0.0';
-            
-            avgRatingLarge.textContent = avg;
-            totalReviewsCount.textContent = `${visibleReviews.length} ${translations.reviewsCount}`;
-            
-            // Update summary stars
-            avgStarsSummary.innerHTML = Array(5).fill(0).map((_, i) => `
-                <svg class="w-3 h-3 ${i < Math.round(avg) ? 'text-secondary' : 'text-gray-200'}" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-                </svg>
-            `).join('');
-
-            updateBars(reviews);
-
-            if (visibleReviews.length === 0) {
-                reviewsList.innerHTML = `<p class="text-center text-gray-400 italic py-10">${translations.noReviews}</p>`;
-                return;
-            }
-
-            reviewsList.innerHTML = visibleReviews.map(review => `
-                <div class="space-y-4 animate-slide-up">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full avatar-circle text-[clamp(0.875rem,3vw,1rem)]">
-                            ${review.name ? review.name.charAt(0).toUpperCase() : 'G'}
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900">${review.name || 'Guest User'}</h4>
-                            <div class="flex flex-col mt-0.5">
-                                <div class="flex items-center gap-2">
-                                    <div class="flex gap-0.5 text-secondary">
-                                        ${Array(5).fill(0).map((_, i) => `
-                                            <svg class="w-3 h-3 ${i < review.rating ? 'fill-current' : 'text-gray-300'}" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-                                            </svg>
-                                        `).join('')}
-                                    </div>
-                                    <span class="text-[10px] text-gray-400 font-medium">${timeAgo(review.created_at)}</span>
-                                </div>
-                                <div class="text-[9px] font-black text-secondary uppercase tracking-widest mt-1">
-                                    Rated ${review.rating} ${translations.ratedOutOf}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600 leading-relaxed pl-14">
-                        ${review.feedback || `<span class="italic text-gray-300">${translations.noReviews}</span>`}
-                    </p>
-                </div>
-            `).join('');
-        } catch (err) {
-            console.error('Error loading reviews:', err);
-        }
-    }
 
     function timeAgo(date) {
         const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -248,4 +261,3 @@ export async function initReviewLogic(translations) {
         return Math.floor(seconds) + "s";
     }
 }
-

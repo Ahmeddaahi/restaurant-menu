@@ -8,6 +8,14 @@ import { supabase } from './supabase.js';
 const CF_WORKER_URL = 'https://r2-uploader.ahmedexga.workers.dev'; // Replace with your Worker URL
 const CF_AUTH_SECRET = 'NadiFood123!'; // Replace with your AUTH_SECRET from Worker settings
 
+// Cache key — must match the one in script.js
+const MENU_CACHE_KEY = 'nadicafe_menu_v1';
+
+/** Invalidate the public menu's localStorage cache after any admin change */
+function bustMenuCache() {
+    try { localStorage.removeItem(MENU_CACHE_KEY); } catch (_) {}
+}
+
 // Application State
 const state = {
     menuData: [],
@@ -30,37 +38,38 @@ async function init() {
         document.getElementById('dashboard').classList.add('hidden');
     }
 
-    // Listen for auth changes
-    supabase.auth.onAuthStateChange((_event, session) => {
+    // Listen for auth changes — store subscription for clean-up
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
         state.session = session;
         if (!session) {
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('dashboard').classList.add('hidden');
         }
     });
+
+    window.addEventListener('beforeunload', () => {
+        authListener.subscription.unsubscribe();
+    });
 }
 
 async function fetchData() {
-    // Show loading state if needed
-
-    // Fetch categories
+    // Fetch categories — only the columns we use
     const { data: categories, error: catError } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name_en, name_so')
         .order('name_en');
 
     if (catError) console.error('Error fetching categories:', catError);
     state.categories = categories || [];
 
-    // Fetch menu items
+    // Fetch menu items — only the columns we use
     const { data: items, error: itemError } = await supabase
         .from('menu_items')
-        .select('*')
+        .select('id, name_en, name_so, category_id, price, image_url, description_en, description_so, is_popular, rating, prep_time, created_at')
         .order('created_at', { ascending: false });
 
     if (itemError) console.error('Error fetching items:', itemError);
 
-    // Map items to the format expected by the frontend
     state.menuData = (items || []).map(item => ({
         id: item.id,
         name: { en: item.name_en, so: item.name_so },
@@ -283,20 +292,39 @@ window.handleSaveItem = async (e) => {
         };
 
         if (id) {
+            // UPDATE: patch local state optimistically, no full re-fetch
             const { error } = await supabase
                 .from('menu_items')
                 .update(itemData)
                 .eq('id', id);
             if (error) throw error;
+
+            const idx = state.menuData.findIndex(i => String(i.id) === String(id));
+            if (idx > -1) {
+                state.menuData[idx] = {
+                    ...state.menuData[idx],
+                    name: { en: itemData.name_en, so: itemData.name_so },
+                    category: itemData.category_id,
+                    price: itemData.price,
+                    image: itemData.image_url,
+                    description: { en: itemData.description_en, so: itemData.description_so },
+                    rating: itemData.rating,
+                    prepTime: itemData.prep_time
+                };
+            }
+            bustMenuCache(); // Invalidate public menu cache
+            closeModal();
+            renderDashboard();
         } else {
+            // INSERT: must re-fetch to get the server-assigned ID
             const { error } = await supabase
                 .from('menu_items')
                 .insert([itemData]);
             if (error) throw error;
+            bustMenuCache(); // Invalidate public menu cache
+            closeModal();
+            await fetchData();
         }
-
-        closeModal();
-        await fetchData();
     } catch (err) {
         alert('Error saving item: ' + err.message);
     } finally {
@@ -315,7 +343,10 @@ window.deleteItem = async (id) => {
         if (error) {
             alert('Error deleting item: ' + error.message);
         } else {
-            await fetchData();
+            // Optimistic: remove from local state, no full re-fetch needed
+            state.menuData = state.menuData.filter(i => String(i.id) !== String(id));
+            bustMenuCache(); // Invalidate public menu cache
+            renderDashboard();
         }
     }
 };
@@ -337,9 +368,9 @@ window.closeCategoryModal = () => {
 
 window.handleAddCategory = async (e) => {
     e.preventDefault();
-    const id = document.getElementById('new-cat-id').value;
-    const name_en = document.getElementById('new-cat-en').value;
-    const name_so = document.getElementById('new-cat-so').value;
+    const id = document.getElementById('new-cat-id').value.trim();
+    const name_en = document.getElementById('new-cat-en').value.trim();
+    const name_so = document.getElementById('new-cat-so').value.trim();
 
     const { error } = await supabase
         .from('categories')
@@ -351,7 +382,10 @@ window.handleAddCategory = async (e) => {
         document.getElementById('new-cat-id').value = '';
         document.getElementById('new-cat-en').value = '';
         document.getElementById('new-cat-so').value = '';
-        await fetchData();
+        // Optimistic: push to local state, no full re-fetch needed
+        state.categories.push({ id, name_en, name_so });
+        bustMenuCache(); // Invalidate public menu cache
+        renderDashboard();
     }
 };
 
@@ -365,7 +399,10 @@ window.handleDeleteCategory = async (id) => {
         if (error) {
             alert('Error deleting category: ' + error.message);
         } else {
-            await fetchData();
+            // Optimistic: remove from local state, no full re-fetch needed
+            state.categories = state.categories.filter(c => c.id !== id);
+            bustMenuCache(); // Invalidate public menu cache
+            renderDashboard();
         }
     }
 };
