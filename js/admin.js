@@ -63,6 +63,16 @@ async function init() {
             }
         });
     }
+
+    // --- Search Input UI Handling ---
+    const searchForm = document.getElementById('admin-search-form');
+    const searchInput = document.getElementById('admin-search');
+    if (searchForm && searchInput) {
+        searchForm.onsubmit = (e) => {
+            e.preventDefault();
+            searchInput.blur();
+        };
+    }
 }
 
 function updateImageUploadUI(isSelected, fileName = '') {
