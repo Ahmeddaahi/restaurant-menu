@@ -376,23 +376,27 @@ export function createAboutPage(lang, translations, staffMembers, onBack) {
                 </div>
             </div>
 
-            <section class="space-y-10">
-                <div class="text-center">
-                    <p class="text-xs text-primary font-bold uppercase tracking-[0.4em]">${translations.meetOurStaff}</p>
-                    <h3 class="text-3xl font-bold text-gray-900 mt-3">${translations.meetOurStaff}</h3>
+            <section class="staff-section space-y-12">
+                <div class="text-center space-y-3">
+                    <span class="staff-section-eyebrow">${translations.meetOurStaff}</span>
+                    <h3 class="staff-section-title">${translations.meetOurStaff}</h3>
+                    <div class="staff-section-divider"></div>
                 </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    ${staffMembers.map(member => `
-                        <div class="group bg-white rounded-[2.5rem] p-5 shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-                            <div class="relative h-72 rounded-[2rem] overflow-hidden mb-6">
-                                <img src="${member.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                    ${staffMembers.map((member, i) => `
+                        <div class="staff-card" style="animation-delay: ${i * 0.12}s">
+                            <div class="staff-avatar-wrapper">
+                                <div class="staff-avatar-ring">
+                                    <div class="staff-avatar-inner">
+                                        <img src="${member.image}" alt="${member.name}" class="staff-avatar-img">
+                                    </div>
+                                </div>
+                                <div class="staff-role-badge">${translations[member.role]}</div>
                             </div>
-                            <div class="px-2 pb-2">
-                                <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">${translations[member.role]}</span>
-                                <h4 class="text-xl font-bold text-gray-900 mt-1">${member.name}</h4>
-                                <p class="text-sm text-gray-500 mt-4 leading-relaxed">${member.bio[lang]}</p>
+                            <div class="staff-info">
+                                <h4 class="staff-name">${member.name}</h4>
+                                <p class="staff-bio">${member.bio[lang]}</p>
                             </div>
                         </div>
                     `).join('')}
