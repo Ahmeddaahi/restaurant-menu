@@ -158,23 +158,4 @@ export const uiTranslations = {
     }
 };
 
-export const staffMembers = [
-    {
-        name: "Chef Ahmed",
-        role: "staffHeadChef",
-        image: "https://images.unsplash.com/photo-1577219481152-bca4673df505?auto=format&fit=crop&q=80&w=300",
-        bio: { so: "10 sano oo khibrad u leh cuntooyinka dhaqanka iyo kuwa casriga ah.", en: "10 years of experience in traditional and modern cuisine." }
-    },
-    {
-        name: "Zahra",
-        role: "staffWaitress",
-        image: "https://images.unsplash.com/photo-1581299894007-aaa50297cf16?auto=format&fit=crop&q=80&w=300",
-        bio: { so: "Had iyo jeer u adeegta macaamiisha si dhoolacaddeyn leh.", en: "Always serving customers with a bright smile." }
-    },
-    {
-        name: "Khalid",
-        role: "staffBarista",
-        image: "https://images.unsplash.com/photo-1559511259-664653ea8c66?auto=format&fit=crop&q=80&w=300",
-        bio: { so: "Khabiir ku ah samaynta Bunka iyo smoothie-yada labeenta leh.", en: "Expert in making Jebena coffee and creamy smoothies." }
-    }
-];
+

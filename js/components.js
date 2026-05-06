@@ -298,7 +298,7 @@ export function createItemDetailsPage(
 }
 
 
-export function createAboutPage(lang, translations, staffMembers, onBack) {
+export function createAboutPage(lang, translations, onBack) {
   const container = document.createElement("div");
   container.className =
     "px-6 py-8 fade-in space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24";
@@ -376,32 +376,6 @@ export function createAboutPage(lang, translations, staffMembers, onBack) {
                 </div>
             </div>
 
-            <section class="staff-section space-y-12">
-                <div class="text-center space-y-3">
-                    <span class="staff-section-eyebrow">${translations.meetOurStaff}</span>
-                    <h3 class="staff-section-title">${translations.meetOurStaff}</h3>
-                    <div class="staff-section-divider"></div>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                    ${staffMembers.map((member, i) => `
-                        <div class="staff-card" style="animation-delay: ${i * 0.12}s">
-                            <div class="staff-avatar-wrapper">
-                                <div class="staff-avatar-ring">
-                                    <div class="staff-avatar-inner">
-                                        <img src="${member.image}" alt="${member.name}" class="staff-avatar-img">
-                                    </div>
-                                </div>
-                                <div class="staff-role-badge">${translations[member.role]}</div>
-                            </div>
-                            <div class="staff-info">
-                                <h4 class="staff-name">${member.name}</h4>
-                                <p class="staff-bio">${member.bio[lang]}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </section>
 
             <div class="bg-white p-6 rounded-[2rem] shadow-xl border border-gray-100 space-y-6">
                 <div class="flex items-center justify-between gap-4">

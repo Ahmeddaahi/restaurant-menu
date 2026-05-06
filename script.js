@@ -2,7 +2,7 @@
  * Jua Café - Main Application Logic (Controller)
  */
 
-import { menuItems, uiTranslations, config, staffMembers } from './js/data.js';
+import { menuItems, uiTranslations, config } from './js/data.js';
 import { translator } from './js/translations.js';
 import { createItemCard, createCategoryTab, createCartPage, createItemDetailsPage, createAboutPage, createReviewPage } from './js/components.js';
 import { supabase } from './js/supabase.js';
@@ -630,7 +630,6 @@ function renderCurrentView(data = null) {
             aboutPage.appendChild(createAboutPage(
                 currentLang,
                 translations,
-                staffMembers,
                 () => showView('menu')
             ));
             main.parentElement.appendChild(aboutPage);
