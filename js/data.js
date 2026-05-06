@@ -4,7 +4,7 @@
 
 export const config = {
     name: "Nadi Cafe",
-    phone: "251915745157",
+    phone: "+251915745157",
     fallbackImage: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=60&w=300"
 };
 
