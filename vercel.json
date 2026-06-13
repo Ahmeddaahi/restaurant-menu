@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "name": "jua-cafe-qr-menu",
+  "name": "nadi-cafe-menu",
+  "framework": "nextjs",
   "headers": [
     {
       "source": "/images/(.*)",
@@ -8,15 +9,6 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*).(js|css)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }

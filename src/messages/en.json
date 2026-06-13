@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Nadi Cafe | QR Menu",
+    "description": "Premium fresh juices, smoothies, and healthy snacks in Jigjiga, Ethiopia. Explore our digital QR menu."
+  },
+  "header": {
+    "cart": "Cart"
+  },
+  "hero": {
+    "eyebrow": "QR MENU · JIGJIGA",
+    "title": "Nadi Cafe",
+    "subtitle": "From our kitchen to your heart",
+    "exploreMenu": "Explore Menu",
+    "ourStory": "Our Story",
+    "scrollDown": "Scroll down"
+  },
+  "categories": {
+    "all": "All",
+    "juices": "Juices",
+    "smoothies": "Smoothies",
+    "snacks": "Snacks",
+    "hotDrinks": "Hot Drinks",
+    "specials": "Specials"
+  },
+  "search": {
+    "placeholder": "Search juices, smoothies...",
+    "noResults": "No items found for your search."
+  },
+  "menu": {
+    "popular": "Popular",
+    "new": "New",
+    "add": "Add",
+    "noItems": "No items in this category.",
+    "currency": "ETB"
+  },
+  "cart": {
+    "title": "Your Order",
+    "empty": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "placeOrder": "Place Order",
+    "remove": "Remove",
+    "items": "items"
+  },
+  "about": {
+    "title": "Our Story",
+    "p1": "Nadi Cafe is a premium destination in Jigjiga for health-conscious foodies and lovers of natural drinks. Born from a passion for wellness and community, we bring the vibrant energy of fresh ingredients to every glass.",
+    "p2": "We specialize in 100% natural cold-pressed juices, creamy tropical smoothies, and authentic Ethiopian Jebena coffee. Every recipe is crafted with care, using the freshest locally sourced fruits and ingredients.",
+    "p3": "What started as a simple vision — to make healthy living delicious and accessible in Jigjiga — has grown into a beloved local gem where quality meets warmth.",
+    "fresh": "Fresh Ingredients",
+    "local": "Local & Proud",
+    "love": "Made with Love"
+  },
+  "reviews": {
+    "title": "What Our Guests Say",
+    "basedOn": "Based on {count} reviews",
+    "writeReview": "Write a review"
+  },
+  "footer": {
+    "tagline": "From our kitchen to your heart",
+    "copyright": "© 2025 Nadi Cafe · Jigjiga, Ethiopia",
+    "instagram": "Instagram",
+    "whatsapp": "WhatsApp"
+  }
+}
