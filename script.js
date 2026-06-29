@@ -262,7 +262,7 @@ function renderCategories() {
     categoryList.innerHTML = '';
     const currentLang = translator.getLanguage();
 
-    state.categories.forEach(cat => {
+    state.categories.forEach((cat, index) => {
         const isActive = cat.id === state.activeCategory;
         const btn = createCategoryTab(
             cat,
@@ -270,6 +270,8 @@ function renderCategories() {
             isActive,
             () => filterCategory(cat.id)
         );
+        // Stagger the slide-in animation
+        btn.style.animationDelay = `${index * 0.06}s`;
         categoryList.appendChild(btn);
     });
 }
