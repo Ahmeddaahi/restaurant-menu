@@ -87,15 +87,15 @@ async function fetchSupabaseData() {
     // Fetch categories — only the columns we use
     const { data: categories, error: catError } = await supabase
         .from('categories')
-        .select('id, name_en, name_so')
+        .select('id, name_en, name_so, image_url')
         .order('name_en');
 
     if (catError) {
         console.error('Error fetching categories:', catError);
     } else {
         state.categories = [
-            { id: "All", so: "Dhammaan", en: "All" },
-            ...categories.map(c => ({ id: c.id, so: c.name_so, en: c.name_en }))
+            { id: "All", so: "Dhammaan", en: "All", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=200&h=200" },
+            ...categories.map(c => ({ id: c.id, so: c.name_so, en: c.name_en, image: c.image_url }))
         ];
     }
 
@@ -233,16 +233,19 @@ function toggleSearch(active) {
     const hero = document.getElementById('hero-section');
     const search = document.getElementById('search-section');
     const input = document.getElementById('main-search-input');
+    const exploreHeading = document.getElementById('explore-menu-heading');
     
     if (!hero || !search) return;
 
     if (active) {
         hero.style.display = 'none';
         search.style.display = 'block';
+        if (exploreHeading) exploreHeading.style.display = 'none';
         if (input) input.focus();
     } else {
-        hero.style.display = 'block';
+        hero.style.display = 'flex';
         search.style.display = 'none';
+        if (exploreHeading) exploreHeading.style.display = 'flex';
         state.searchQuery = "";
         if (input) input.value = "";
         applyFilters();
@@ -516,7 +519,7 @@ function renderCurrentView(data = null) {
     const heroSection = document.getElementById('hero-section');
     const searchSection = document.getElementById('search-section');
     const categoryNav = document.getElementById('category-nav');
-    const menuSection = document.querySelector('section.px-6.mt-2');
+    const menuSection = document.querySelector('section.px-5.mt-3');
     const bottomNav = document.querySelector('nav.fixed');
 
     // Reset visibility
@@ -533,13 +536,16 @@ function renderCurrentView(data = null) {
     if (bottomNav) bottomNav.style.display = isCart ? 'none' : 'flex';
 
     // Search vs Hero mutually exclusive logic
+    const exploreHeading = document.getElementById('explore-menu-heading');
     if (isMenu) {
         const isSearching = !!state.searchQuery;
-        if (heroSection) heroSection.style.display = isSearching ? 'none' : 'block';
+        if (heroSection) heroSection.style.display = isSearching ? 'none' : 'flex';
         if (searchSection) searchSection.style.display = isSearching ? 'block' : 'none';
+        if (exploreHeading) exploreHeading.style.display = isSearching ? 'none' : 'flex';
     } else {
         if (heroSection) heroSection.style.display = 'none';
         if (searchSection) searchSection.style.display = 'none';
+        if (exploreHeading) exploreHeading.style.display = 'none';
     }
 
     // Remove existing extra views

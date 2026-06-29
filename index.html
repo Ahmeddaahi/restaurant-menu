@@ -37,7 +37,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.nadicafe.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Preload LCP Images -->
     <link rel="preload" as="image" href="images/logo.webp" fetchpriority="high">
@@ -126,31 +126,41 @@
         </section>
 
         <!-- Hero Section -->
-        <section id="hero-section" class="px-6 py-2">
-            <div class="relative h-44 rounded-[32px] overflow-hidden shadow-xl animate-slide-up">
-                <img src="images/de44e0ea-d57c-44d7-8f91-24b0f07a46a0.webp" alt="Nadi Cafe" width="800" height="176" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                <div class="absolute bottom-6 left-8 right-8">
-                    <span class="text-accent font-bold text-xs uppercase tracking-widest mb-1 block"
-                        data-translate="heroSubtitle">From our kitchen to your heart</span>
-                    <h1 class="text-white text-2xl font-bold leading-tight" data-translate="heroTitle">Welcome to Nadi Cafe</h1>
-                </div>
+        <section id="hero-section" class="hero-split px-5 pt-3 pb-1">
+            <!-- Left: Text -->
+            <div class="hero-text">
+                <span class="hero-eyebrow" data-translate="heroSubtitle">From our kitchen</span>
+                <h1 class="hero-headline">Made with love,&nbsp;served fresh daily</h1>
+                <p class="hero-tagline">Healthy, delicious and made just for you. Taste the difference in every bite.</p>
+            </div>
+            <!-- Right: Food Image -->
+            <div class="hero-image-wrap">
+                <img src="images/de44e0ea-d57c-44d7-8f91-24b0f07a46a0.webp"
+                     alt="Nadi Cafe fresh food"
+                     width="400" height="400"
+                     class="hero-img"
+                     fetchpriority="high">
             </div>
         </section>
 
+        <!-- Explore Menu Heading -->
+        <div class="explore-heading" id="explore-menu-heading">
+            <span>Explore Our Menu</span>
+            <span class="explore-leaf">🌿</span>
+        </div>
 
         <!-- Categories -->
         <section id="category-nav" class="sticky-category">
             <h2 class="sr-only">Menu Categories</h2>
-            <div class="flex gap-3 overflow-x-auto px-6 no-scrollbar" id="category-list">
+            <div class="flex gap-4 overflow-x-auto px-5 no-scrollbar" id="category-list">
                 <!-- Categories will be injected here -->
             </div>
         </section>
 
         <!-- Menu Grid -->
-        <section class="px-6 mt-2">
+        <section class="px-5 mt-3">
             <h2 class="sr-only">Food and Drinks</h2>
-            <div class="grid grid-cols-2 gap-x-4 gap-y-6" id="menu-grid">
+            <div class="grid grid-cols-2 gap-x-3 gap-y-5" id="menu-grid">
                 <!-- Menu items will be injected here -->
             </div>
         </section>

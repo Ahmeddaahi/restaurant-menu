@@ -47,9 +47,10 @@ export function createItemCard(
                     <span>${item.rating}</span>
                 </div>
             </div>
-            <h3 class="font-bold text-gray-800 text-[13px] leading-tight mb-2 line-clamp-1">${item.name[lang]}</h3>
-            <div class="flex items-center justify-between mt-auto">
-                <span class="text-gray-900 font-bold text-base">${translations.currency} ${item.price}</span>
+            <h3 class="font-bold text-gray-800 text-[13px] leading-tight mb-1 line-clamp-1">${item.name[lang]}</h3>
+            ${item.description && item.description[lang] ? `<p class="item-description">${item.description[lang]}</p>` : ''}
+            <div class="flex items-center justify-between mt-auto pt-1">
+                <span class="item-price">${translations.currency} ${item.price}</span>
                 <button class="add-btn" id="add-${item.id}" aria-label="Add ${item.name[lang]} to cart">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -80,9 +81,65 @@ export function createItemCard(
 
 export function createCategoryTab(cat, lang, isActive, onClick) {
   const btn = document.createElement("button");
-  btn.className = `category-tab flex-shrink-0 px-5 py-2 rounded-2xl text-[13px] font-semibold ${isActive ? "active" : ""}`;
-  btn.textContent = cat[lang];
+  btn.className = `category-tab flex-shrink-0 ${isActive ? "active" : ""}`;
+  btn.setAttribute('aria-label', `Filter by ${cat[lang]}`);
   btn.onclick = onClick;
+
+  // Real food images per category — Unsplash, tightly cropped 120×120
+  const catImages = {
+    // "All" → colourful mezze / food spread
+    All:       "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=120&h=120&q=80",
+    // Desserts → chocolate lava cake
+    Desserts:  "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=120&h=120&q=80",
+    // Drinks → fresh colourful smoothies
+    Drinks:    "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?auto=format&fit=crop&w=120&h=120&q=80",
+    // Food → vibrant grain bowl / salad
+    Food:      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=120&h=120&q=80",
+    // Specials → elegant plated dish
+    Specials:  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=120&h=120&q=80",
+    // Snacks → crispy golden snacks
+    Snacks:    "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=120&h=120&q=80",
+    // Breakfast → eggs & avocado toast
+    Breakfast: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=120&h=120&q=80",
+    // Coffee → latte art close-up
+    Coffee:    "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=120&h=120&q=80",
+    // Juice → fresh orange juice
+    Juice:     "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=120&h=120&q=80",
+  };
+
+  // Use category image from DB if available, else match by id/English name, then generic fallback
+  const imgUrl = cat.image || catImages[cat.id] || catImages[cat.en]
+    || "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=120&h=120&q=80";
+
+  btn.innerHTML = `
+    <div class="cat-icon-ring">
+      <img
+        src="${imgUrl}"
+        alt="${cat[lang]}"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      >
+    </div>
+    <span>${cat[lang]}</span>
+  `;
+
+  // Wire up shimmer-stop + fade-in once the photo loads
+  const ring = btn.querySelector('.cat-icon-ring');
+  const img  = btn.querySelector('img');
+
+  const markLoaded = () => {
+    img.classList.add('loaded');
+    ring.classList.add('loaded');
+  };
+
+  if (img.complete) {
+    markLoaded();               // already cached
+  } else {
+    img.onload  = markLoaded;
+    img.onerror = markLoaded;   // still stop the shimmer on error
+  }
+
   return btn;
 }
 

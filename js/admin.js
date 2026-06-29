@@ -64,6 +64,18 @@ async function init() {
         });
     }
 
+    const catImageFileInput = document.getElementById('cat-image-file');
+    if (catImageFileInput) {
+        catImageFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                updateCategoryImageUploadUI(true, file.name);
+            } else {
+                updateCategoryImageUploadUI(false);
+            }
+        });
+    }
+
     // --- Search Input UI Handling ---
     const searchForm = document.getElementById('admin-search-form');
     const searchInput = document.getElementById('admin-search');
@@ -98,11 +110,34 @@ function updateImageUploadUI(isSelected, fileName = '') {
     }
 }
 
+function updateCategoryImageUploadUI(isSelected, fileName = '') {
+    const defaultIcon = document.getElementById('cat-default-upload-icon');
+    const confirmedIcon = document.getElementById('cat-confirmed-upload-icon');
+    const uploadText = document.getElementById('cat-upload-text');
+    const container = document.getElementById('cat-image-upload-container');
+
+    if (isSelected) {
+        defaultIcon.classList.add('hidden');
+        confirmedIcon.classList.remove('hidden');
+        uploadText.textContent = 'Image Ready';
+        uploadText.classList.replace('text-gray-500', 'text-green-600');
+        container.classList.replace('border-gray-100', 'border-green-100');
+        container.classList.add('bg-green-50/30');
+    } else {
+        defaultIcon.classList.remove('hidden');
+        confirmedIcon.classList.add('hidden');
+        uploadText.textContent = 'Upload Image';
+        uploadText.classList.replace('text-green-600', 'text-gray-500');
+        container.classList.replace('border-green-100', 'border-gray-100');
+        container.classList.remove('bg-green-50/30');
+    }
+}
+
 async function fetchData() {
-    // Fetch categories — only the columns we use
+    // Fetch categories — only the columns we use (added image_url)
     const { data: categories, error: catError } = await supabase
         .from('categories')
-        .select('id, name_en, name_so')
+        .select('id, name_en, name_so, image_url')
         .order('name_en');
 
     if (catError) console.error('Error fetching categories:', catError);
@@ -184,8 +219,8 @@ function renderCategoryListAdmin() {
     list.innerHTML = state.categories.map(c => `
         <div class="flex items-center justify-between p-4 sm:p-5 bg-white border border-gray-100 rounded-2xl hover:shadow-md transition-shadow group">
             <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold text-[10px] sm:text-xs uppercase shrink-0">
-                    ${c.id.substring(0, 2)}
+                <div class="relative w-10 h-10 rounded-xl overflow-hidden bg-gray-100 shadow-sm ring-1 ring-black/5 shrink-0">
+                    <img src="${c.image_url || 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=120&h=120&q=80'}" class="w-full h-full object-cover">
                 </div>
                 <div class="min-w-0">
                     <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">${c.name_en}</div>
@@ -417,24 +452,66 @@ window.closeCategoryModal = () => {
 
 window.handleAddCategory = async (e) => {
     e.preventDefault();
+    const saveBtn = document.getElementById('cat-save-btn');
+    const originalText = saveBtn.textContent;
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
     const id = document.getElementById('new-cat-id').value.trim();
     const name_en = document.getElementById('new-cat-en').value.trim();
     const name_so = document.getElementById('new-cat-so').value.trim();
+    const imageFile = document.getElementById('cat-image-file').files[0];
+    let imageUrl = document.getElementById('new-cat-image-url').value.trim();
 
-    const { error } = await supabase
-        .from('categories')
-        .insert([{ id, name_en, name_so }]);
+    try {
+        // Handle Image Upload (Cloudflare R2)
+        if (imageFile) {
+            const fileName = `${Date.now()}_cat_${imageFile.name.replace(/\s+/g, '_')}`;
 
-    if (error) {
-        alert('Error adding category: ' + error.message);
-    } else {
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            formData.append('filename', fileName);
+
+            const response = await fetch(CF_WORKER_URL, {
+                method: 'POST',
+                headers: {
+                    'X-Auth-Token': CF_AUTH_SECRET
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Upload failed: ${errorText}`);
+            }
+
+            const uploadData = await response.json();
+            imageUrl = uploadData.url;
+        }
+
+        const { error } = await supabase
+            .from('categories')
+            .insert([{ id, name_en, name_so, image_url: imageUrl }]);
+
+        if (error) throw error;
+
+        // Reset form
         document.getElementById('new-cat-id').value = '';
         document.getElementById('new-cat-en').value = '';
         document.getElementById('new-cat-so').value = '';
+        document.getElementById('cat-image-file').value = '';
+        document.getElementById('new-cat-image-url').value = '';
+        updateCategoryImageUploadUI(false);
+
         // Optimistic: push to local state, no full re-fetch needed
-        state.categories.push({ id, name_en, name_so });
+        state.categories.push({ id, name_en, name_so, image_url: imageUrl });
         bustMenuCache(); // Invalidate public menu cache
         renderDashboard();
+    } catch (err) {
+        alert('Error adding category: ' + err.message);
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
     }
 };
 
