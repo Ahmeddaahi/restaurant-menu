@@ -1102,3 +1102,15 @@ header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
+
+.bottom-nav-fixed {
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 4.5rem !important;
+    border-radius: 28px 28px 0 0 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.03) !important;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
