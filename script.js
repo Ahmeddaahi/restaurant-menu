@@ -243,7 +243,7 @@ function toggleSearch(active) {
         if (exploreHeading) exploreHeading.style.display = 'none';
         if (input) input.focus();
     } else {
-        hero.style.display = 'block';
+        hero.style.display = 'flex';
         search.style.display = 'none';
         if (exploreHeading) exploreHeading.style.display = 'flex';
         state.searchQuery = "";
@@ -541,7 +541,7 @@ function renderCurrentView(data = null) {
     const exploreHeading = document.getElementById('explore-menu-heading');
     if (isMenu) {
         const isSearching = !!state.searchQuery;
-        if (heroSection) heroSection.style.display = isSearching ? 'none' : 'block';
+        if (heroSection) heroSection.style.display = isSearching ? 'none' : 'flex';
         if (searchSection) searchSection.style.display = isSearching ? 'block' : 'none';
         if (exploreHeading) exploreHeading.style.display = isSearching ? 'none' : 'flex';
     } else {
@@ -665,30 +665,3 @@ function renderCurrentView(data = null) {
 
 // Start the app when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
-
-/**
- * Scroll-aware header: glass when over hero, solid once past it.
- * Runs after DOMContentLoaded so the header element exists.
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const header = document.getElementById('main-header');
-    if (!header) return;
-
-    function updateHeaderState() {
-        const heroSection = document.getElementById('hero-section');
-        // Use hero banner height as the threshold, fallback 240px
-        const threshold = heroSection
-            ? heroSection.getBoundingClientRect().bottom + window.scrollY - 10
-            : 240;
-        if (window.scrollY > threshold) {
-            header.classList.add('header-solid');
-        } else {
-            header.classList.remove('header-solid');
-        }
-    }
-
-    // Use passive listener for performance
-    window.addEventListener('scroll', updateHeaderState, { passive: true });
-    // Also run once on load
-    updateHeaderState();
-});

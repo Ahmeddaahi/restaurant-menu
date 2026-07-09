@@ -1,23 +1,14 @@
 :root {
     color-scheme: light;
-    /* Brand */
-    --primary: #1E5A37;
+    --primary: #31642D;
     --primary-light: #E8F5E9;
-    --primary-dark: #143d25;
     --secondary: #F37021;
-    --accent: #D4AF37;
-    /* Luxury palette */
-    --cream: #FFFDF8;
-    --dark-green: #1E5A37;
-    --gold: #D4AF37;
-    --bg-light: #FFFDF8;
+    --accent: #D4DF22;
+    --bg-light: #F8F9FA;
     --card-bg: #FFFFFF;
     --text-main: #1A1A1A;
-    --text-muted: #5A6273;
+    --text-muted: #555555;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Fonts */
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-ui: 'Outfit', sans-serif;
 }
 
 /* ── Smooth Scroll ─────────────────────────────────────── */
@@ -38,9 +29,9 @@ html {
 }
 
 body {
-    background-color: var(--cream);
+    background-color: var(--bg-light);
     color: var(--text-main);
-    font-family: var(--font-ui);
+    font-family: 'Outfit', sans-serif;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
     /* Prevent FOUC: Hidden by default, shown by Tailwind or small script */
@@ -95,9 +86,9 @@ body {
 
 .sticky-category {
     position: sticky;
-    top: 0;
+    top: 105px;
     z-index: 50;
-    background-color: var(--cream);
+    background-color: var(--bg-light);
     padding-top: 1rem;
     padding-bottom: 0.5rem;
 }
@@ -339,8 +330,10 @@ body {
     min-height: 100vh;
 }
 
+header,
 main,
 nav,
+#hero-section,
 #category-nav,
 #menu-grid,
 #explore-menu-heading {
@@ -349,19 +342,14 @@ nav,
     margin-right: auto;
 }
 
-/* Hero section is intentionally NOT max-width constrained — full bleed */
-#hero-section {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-}
-
 header {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
 }
 
+#hero-section {
+    padding-top: 0.5rem;
+}
 
 .sticky-category {
     padding-top: 1rem;
@@ -402,6 +390,10 @@ header {
     header {
         padding-left: 2rem;
         padding-right: 2rem;
+    }
+
+    #hero-section .relative {
+        min-height: 20rem;
     }
 
     #menu-grid {
@@ -833,251 +825,96 @@ header {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FLOATING GLASSMORPHISM HEADER
+   HERO SPLIT LAYOUT
    ═══════════════════════════════════════════════════════════ */
-#main-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 70;
-    /* glass look over hero */
-    background: transparent;
-    transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
-    border-bottom: 1px solid transparent;
-}
-
-/* When scrolled past hero — becomes solid sticky */
-#main-header.header-solid {
-    position: fixed;
-    background: rgba(255, 253, 248, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07);
-}
-
-/* In solid mode, icons go dark */
-#main-header.header-solid #search-btn-header,
-#main-header.header-solid #cart-btn-main {
-    background: rgba(30, 90, 55, 0.08);
-    border-color: rgba(30, 90, 55, 0.12);
-    color: var(--primary);
-}
-
-#main-header.header-solid #search-btn-header svg,
-#main-header.header-solid #cart-btn-main svg {
-    stroke: var(--primary);
-}
-
-#main-header.header-solid #lang-toggle-container {
-    background: rgba(30, 90, 55, 0.08);
-    border-color: rgba(30, 90, 55, 0.12);
-}
-
-#main-header.header-solid #lang-toggle-container button {
-    color: var(--text-muted);
-}
-
-#main-header.header-solid #lang-toggle-container button.active {
-    color: var(--primary) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HERO BANNER — FULL-BLEED IMMERSIVE LUXURY
-   ═══════════════════════════════════════════════════════════ */
-#hero-section {
-    position: relative;
-    margin: 0;
-    padding: 0;
-}
-
-.hero-banner {
-    position: relative;
-    width: 100%;
-    height: 45vh;
-    min-height: 280px;
-    max-height: 440px;
-    /* Only bottom corners rounded — top is full-bleed to screen edge */
-    border-radius: 0 0 24px 24px;
+#hero-section.hero-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+    min-height: 220px;
     overflow: hidden;
-    /* Subtle depth beneath */
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+    background: var(--bg-light);
 }
 
-/* The food photography image — edge to edge */
-.hero-banner-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 30%;
-    display: block;
-    /* Subtle zoom-in on load */
-    animation: heroPanIn 8s ease-out forwards;
+.hero-text {
+    flex: 1 1 0%;
+    padding-right: 0.5rem;
+    animation: fadeInUp 0.6s ease both;
 }
 
-@keyframes heroPanIn {
-    from { transform: scale(1.06); }
-    to   { transform: scale(1.0); }
-}
-
-/* Gradient overlay — dark on left/bottom for text, clear on right */
-.hero-banner-overlay {
-    position: absolute;
-    inset: 0;
-    background:
-        /* left-side darkening for text */
-        linear-gradient(
-            to right,
-            rgba(10, 25, 15, 0.78) 0%,
-            rgba(10, 25, 15, 0.52) 45%,
-            rgba(10, 25, 15, 0.12) 70%,
-            transparent 100%
-        ),
-        /* bottom lift to give depth */
-        linear-gradient(
-            to top,
-            rgba(10, 25, 15, 0.55) 0%,
-            transparent 50%
-        );
-    pointer-events: none;
-}
-
-/* Text content — bottom-left of banner */
-.hero-banner-content {
-    position: absolute;
-    bottom: 1.8rem;
-    left: 1.5rem;
-    right: 38%;
-    z-index: 10;
-    animation: heroTextIn 0.9s 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
-}
-
-@keyframes heroTextIn {
-    from {
-        opacity: 0;
-        transform: translateY(18px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Eyebrow label — 'FROM OUR KITCHEN' */
 .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.6rem;
-    font-weight: 800;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
-    opacity: 0.95;
-}
-
-.hero-eyebrow::before {
-    content: '';
     display: inline-block;
-    width: 18px;
-    height: 1.5px;
-    background: var(--gold);
-    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.55rem;
 }
 
-/* Main headline — Playfair Display luxury serif */
 .hero-headline {
-    font-family: var(--font-display);
-    font-size: clamp(1.55rem, 7vw, 2.5rem);
-    font-weight: 700;
-    line-height: 1.18;
-    color: #FFFFFF;
-    margin: 0 0 0.6rem;
-    letter-spacing: -0.01em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    font-size: clamp(1.45rem, 6.5vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #111827;
+    margin: 0 0 0.65rem;
+    letter-spacing: -0.02em;
 }
 
-/* Gold italic accent word */
-.hero-em {
-    font-style: italic;
-    color: var(--gold);
-    font-weight: 600;
-}
-
-/* Sub-tagline */
 .hero-tagline {
-    font-family: var(--font-ui);
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.78rem;
+    color: #6b7280;
     line-height: 1.6;
-    font-weight: 400;
     max-width: 22ch;
+    font-weight: 400;
 }
 
-/* Decorative quality badges — bottom-right of banner */
-.hero-badges {
-    position: absolute;
-    bottom: 1.5rem;
-    right: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    z-index: 10;
-    animation: heroTextIn 0.9s 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+.hero-image-wrap {
+    flex: 0 0 auto;
+    width: 54%;
+    max-width: 240px;
+    position: relative;
+    animation: fadeInUp 0.7s 0.1s ease both;
 }
 
-.hero-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 100px;
-    padding: 0.3rem 0.65rem 0.3rem 0.45rem;
-    color: white;
-    font-size: 0.62rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
+.hero-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+    box-shadow: 0 20px 50px rgba(49, 100, 45, 0.18),
+        0 8px 20px rgba(0, 0, 0, 0.08);
+    display: block;
 }
 
-.hero-badge-icon {
-    font-size: 0.75rem;
-    line-height: 1;
-}
-
-/* Responsive — larger screens */
 @media (min-width: 480px) {
-    .hero-banner-content {
-        right: 35%;
+    .hero-image-wrap {
+        width: 52%;
+        max-width: 260px;
     }
-    .hero-banner {
-        max-height: 460px;
+
+    .hero-tagline {
+        max-width: 28ch;
     }
 }
 
 @media (min-width: 768px) {
-    .hero-banner {
-        height: 48vh;
-        max-height: 520px;
+    #hero-section.hero-split {
+        min-height: 280px;
+        padding: 1rem 1.5rem;
     }
+
     .hero-headline {
-        font-size: 2.8rem;
+        font-size: 2.6rem;
     }
-    .hero-banner-content {
-        left: 2.5rem;
-        bottom: 2.5rem;
-        right: 42%;
+
+    .hero-image-wrap {
+        max-width: 320px;
     }
-    .hero-badges {
-        right: 2rem;
-        bottom: 2rem;
+
+    .hero-tagline {
+        font-size: 0.875rem;
     }
 }
 
@@ -1089,8 +926,7 @@ header {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 1.25rem 1.25rem 0.4rem;
-    font-family: var(--font-ui);
+    padding: 1.1rem 1.25rem 0.4rem;
     font-size: 1.05rem;
     font-weight: 700;
     color: #111827;
@@ -1105,8 +941,8 @@ header {
    CATEGORY TABS — CIRCULAR ICON STYLE
    ═══════════════════════════════════════════════════════════ */
 .sticky-category {
-    top: 0;
-    /* no fixed header offset needed — header is absolute over hero */
+    top: 105px;
+    /* match header height */
 }
 
 /* Override for the new circular tab layout */
@@ -1260,11 +1096,11 @@ nav.fixed div span {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HEADER — GLASSMORPHISM (now handled via #main-header above)
+   HEADER — CLEANER STICKY FEEL
    ═══════════════════════════════════════════════════════════ */
-/* Legacy: keep for any shared specificity */
 header {
-    transition: background 0.35s ease, box-shadow 0.35s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
 .bottom-nav-fixed {
@@ -1277,33 +1113,4 @@ header {
     border-top: 1px solid rgba(0, 0, 0, 0.03) !important;
     box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-    background-color: rgba(255, 253, 248, 0.96) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HEADER SCROLL BEHAVIOUR (JS-driven)
-   ═══════════════════════════════════════════════════════════ */
-/* Animate header text/icon colours in glass mode */
-#main-header:not(.header-solid) #lang-toggle-container button {
-    color: rgba(255, 255, 255, 0.9);
-}
-#main-header:not(.header-solid) #lang-toggle-container button.active {
-    color: #ffffff !important;
-}
-#main-header:not(.header-solid) #lang-indicator {
-    background-color: rgba(255, 255, 255, 0.3);
-    box-shadow: none;
-}
-
-/* Card backgrounds use cream */
-.item-card {
-    background: #FFFFFF;
-}
-
-/* Make category area background match cream */
-#category-nav,
-.sticky-category {
-    background-color: var(--cream) !important;
 }
