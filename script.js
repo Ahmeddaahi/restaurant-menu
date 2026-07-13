@@ -322,7 +322,7 @@ function renderMenu(items) {
     const translations = uiTranslations[currentLang];
 
     if (items.length === 0) {
-        grid.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-10 fade-in">${translations.noItems}</p>`;
+        grid.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-10">${translations.noItems}</p>`;
         return;
     }
 

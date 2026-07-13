@@ -70,7 +70,7 @@ export async function initReviewLogic(translations) {
         }
 
         reviewsList.innerHTML = reviews.map(review => `
-            <div class="space-y-4 animate-slide-up">
+            <div class="space-y-4">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-full avatar-circle text-[clamp(0.875rem,3vw,1rem)]">
                         ${review.name ? review.name.charAt(0).toUpperCase() : 'G'}

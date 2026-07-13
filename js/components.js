@@ -12,8 +12,7 @@ export function createItemCard(
   onToggleFavorite
 ) {
   const card = document.createElement("div");
-  card.className = `item-card flex flex-col fade-in cursor-pointer`;
-  card.style.animationDelay = `${index * 0.05}s`;
+  card.className = `item-card flex flex-col cursor-pointer`;
 
   card.onclick = () => onShowDetails(item);
 
@@ -154,7 +153,7 @@ export function createCartPage(
 ) {
   const container = document.createElement("div");
   container.className =
-    "px-6 py-8 fade-in space-y-8 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14";
+    "px-6 py-8 space-y-8 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14";
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -182,7 +181,7 @@ export function createCartPage(
     itemsHtml = cartItems
       .map(
         (item) => `
-            <div class="cart-item-card bg-white rounded-[2rem] shadow-sm p-4 md:p-5 grid grid-cols-[80px_1fr] gap-4 items-center animate-slide-up">
+            <div class="cart-item-card bg-white rounded-[2rem] shadow-sm p-4 md:p-5 grid grid-cols-[80px_1fr] gap-4 items-center">
                 <div class="relative overflow-hidden rounded-3xl bg-gray-100 w-full h-20">
                     <img src="${item.image}" class="w-full h-full object-cover">
                 </div>
@@ -272,7 +271,7 @@ export function createItemDetailsPage(
 ) {
   const container = document.createElement("div");
   container.className =
-    "fixed inset-0 bg-white z-[200] overflow-y-auto flex flex-col fade-in";
+    "fixed inset-0 bg-white z-[200] overflow-y-auto flex flex-col";
 
   container.innerHTML = `
         <div class="relative h-[45vh] w-full">
@@ -358,7 +357,7 @@ export function createItemDetailsPage(
 export function createAboutPage(lang, translations, onBack) {
   const container = document.createElement("div");
   container.className =
-    "px-6 py-8 fade-in space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24";
+    "px-6 py-8 space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24";
 
   container.innerHTML = `
         <div class="flex items-center gap-4 mb-6">
@@ -492,7 +491,7 @@ export function createAboutPage(lang, translations, onBack) {
 
 export function createReviewPage(lang, translations, onBack) {
     const container = document.createElement("div");
-    container.className = "px-6 py-8 fade-in space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24 max-w-2xl mx-auto w-full";
+    container.className = "px-6 py-8 space-y-10 min-h-screen bg-[#F8F9FA] md:px-10 lg:px-14 pb-24 max-w-2xl mx-auto w-full";
 
     container.innerHTML = `
         <div class="flex items-center gap-4 mb-6">
@@ -540,7 +539,7 @@ export function createReviewPage(lang, translations, onBack) {
                 <button id="write-review-text-btn" class="mt-4 text-primary text-xs font-bold hover:underline">${translations.writeReview}</button>
             </div>
 
-            <div id="review-modal" class="hidden glass-card rounded-[2.5rem] p-8 space-y-6 animate-slide-up shadow-2xl border border-white/30">
+            <div id="review-modal" class="hidden glass-card rounded-[2.5rem] p-8 space-y-6 shadow-2xl border border-white/30">
                 <div class="flex justify-between items-start">
                     <h3 class="text-xl font-bold text-gray-900">${translations.howWasJuice}</h3>
                     <button id="close-review-modal" class="text-gray-400 hover:text-red-500 transition-colors">
