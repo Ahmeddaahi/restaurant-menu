@@ -1,0 +1,11 @@
+{
+  "name": "nadi-cafe-qr-menu",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev . --port 8788"
+  },
+  "devDependencies": {
+    "wrangler": "^4.160.1"
+  }
+}
