@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "wrangler pages dev . --port 8788"
   },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4"
+  },
   "devDependencies": {
     "wrangler": "^4.160.1"
   }

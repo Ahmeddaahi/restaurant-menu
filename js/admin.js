@@ -246,6 +246,105 @@ window.handleLogout = async () => {
   location.reload();
 };
 
+window.openAdminCreateModal = () => {
+  const modal = document.getElementById("admin-create-modal");
+  if (!modal) return;
+
+  document.getElementById("new-admin-email").value = "";
+  document.getElementById("new-admin-password").value = "";
+  document.getElementById("new-admin-confirm-password").value = "";
+  document.getElementById("new-admin-error").classList.add("hidden");
+  document.getElementById("new-admin-success").classList.add("hidden");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+};
+
+window.closeAdminCreateModal = () => {
+  const modal = document.getElementById("admin-create-modal");
+  if (!modal) return;
+
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+};
+
+window.handleCreateAdmin = async (e) => {
+  e.preventDefault();
+
+  const emailInput = document.getElementById("new-admin-email");
+  const passwordInput = document.getElementById("new-admin-password");
+  const confirmInput = document.getElementById("new-admin-confirm-password");
+  const errorEl = document.getElementById("new-admin-error");
+  const successEl = document.getElementById("new-admin-success");
+  const submitBtn = document.getElementById("create-admin-btn");
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const confirmPassword = confirmInput.value;
+
+  errorEl.classList.add("hidden");
+  successEl.classList.add("hidden");
+
+  if (!email || !password || !confirmPassword) {
+    errorEl.textContent = "Please complete every field.";
+    errorEl.classList.remove("hidden");
+    return;
+  }
+
+  if (password.length < 6) {
+    errorEl.textContent = "Password must be at least 6 characters long.";
+    errorEl.classList.remove("hidden");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    errorEl.textContent = "Passwords do not match.";
+    errorEl.classList.remove("hidden");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Creating...";
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/admin`,
+        data: { role: "admin" },
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    if (
+      data?.user &&
+      data.user.identities &&
+      data.user.identities.length === 0
+    ) {
+      successEl.textContent =
+        "This email already exists. Please use a different admin email.";
+      successEl.classList.remove("hidden");
+      return;
+    }
+
+    successEl.textContent =
+      "Admin account created successfully. Ask the new admin to confirm their email before logging in.";
+    successEl.classList.remove("hidden");
+    emailInput.value = "";
+    passwordInput.value = "";
+    confirmInput.value = "";
+  } catch (err) {
+    errorEl.textContent = err.message || "Could not create the admin account.";
+    errorEl.classList.remove("hidden");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Create Admin";
+  }
+};
+
 // --- UI Rendering ---
 function renderCategorySelect() {
   const select = document.getElementById("category");
