@@ -2,225 +2,267 @@
  * Jua Café - Admin Logic (Supabase Integration)
  */
 
-import { supabase } from './supabase.js';
-
-// --- Cloudflare R2i Configuration ---
-const CF_WORKER_URL = 'https://r2-uploader.ahmedexga.workers.dev'; // Replace with your Worker URL
-const CF_AUTH_SECRET = 'NadiFood123!'; // Replace with your AUTH_SECRET from Worker settings
+import { supabase } from "./supabase.js";
 
 // Cache key — must match the one in script.js
-const MENU_CACHE_KEY = 'nadicafe_menu_v1';
+const MENU_CACHE_KEY = "nadicafe_menu_v1";
 
 /** Invalidate the public menu's localStorage cache after any admin change */
 function bustMenuCache() {
-    try { localStorage.removeItem(MENU_CACHE_KEY); } catch (_) {}
+  try {
+    localStorage.removeItem(MENU_CACHE_KEY);
+  } catch (_) {}
+}
+
+async function uploadImage(file, filename) {
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+  if (sessionError || !session)
+    throw new Error("Please sign in again before uploading images.");
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(offset, offset + chunkSize),
+    );
+  }
+
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      filename,
+      contentType: file.type,
+      fileBase64: btoa(binary),
+    }),
+  });
+  const uploadData = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(uploadData.error || "Image upload failed.");
+  if (!uploadData.url) throw new Error("Image storage returned no URL.");
+  return uploadData.url;
 }
 
 // Application State
 const state = {
-    menuData: [],
-    categories: [],
-    session: null
+  menuData: [],
+  categories: [],
+  session: null,
 };
 
 // --- Initialization ---
 async function init() {
-    // Check active session
-    const { data: { session } } = await supabase.auth.getSession();
-    state.session = session;
+  // Check active session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  state.session = session;
 
-    if (session) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        await fetchData();
-    } else {
-        document.getElementById('login-screen').classList.remove('hidden');
-        document.getElementById('dashboard').classList.add('hidden');
-    }
+  if (session) {
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    await fetchData();
+  } else {
+    document.getElementById("login-screen").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+  }
 
-    // Listen for auth changes — store subscription for clean-up
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-        state.session = session;
-        if (!session) {
-            document.getElementById('login-screen').classList.remove('hidden');
-            document.getElementById('dashboard').classList.add('hidden');
-        }
+  // Listen for auth changes — store subscription for clean-up
+  const { data: authListener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      state.session = session;
+      if (!session) {
+        document.getElementById("login-screen").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("hidden");
+      }
+    },
+  );
+
+  window.addEventListener("beforeunload", () => {
+    authListener.subscription.unsubscribe();
+  });
+
+  // --- Image Upload UI Feedback ---
+  const imageFileInput = document.getElementById("image-file");
+  if (imageFileInput) {
+    imageFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        updateImageUploadUI(true, file.name);
+      } else {
+        updateImageUploadUI(false);
+      }
     });
+  }
 
-    window.addEventListener('beforeunload', () => {
-        authListener.subscription.unsubscribe();
+  const catImageFileInput = document.getElementById("cat-image-file");
+  if (catImageFileInput) {
+    catImageFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        updateCategoryImageUploadUI(true, file.name);
+      } else {
+        updateCategoryImageUploadUI(false);
+      }
     });
+  }
 
-    // --- Image Upload UI Feedback ---
-    const imageFileInput = document.getElementById('image-file');
-    if (imageFileInput) {
-        imageFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                updateImageUploadUI(true, file.name);
-            } else {
-                updateImageUploadUI(false);
-            }
-        });
-    }
-
-    const catImageFileInput = document.getElementById('cat-image-file');
-    if (catImageFileInput) {
-        catImageFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                updateCategoryImageUploadUI(true, file.name);
-            } else {
-                updateCategoryImageUploadUI(false);
-            }
-        });
-    }
-
-    // --- Search Input UI Handling ---
-    const searchForm = document.getElementById('admin-search-form');
-    const searchInput = document.getElementById('admin-search');
-    if (searchForm && searchInput) {
-        searchForm.onsubmit = (e) => {
-            e.preventDefault();
-            searchInput.blur();
-        };
-    }
+  // --- Search Input UI Handling ---
+  const searchForm = document.getElementById("admin-search-form");
+  const searchInput = document.getElementById("admin-search");
+  if (searchForm && searchInput) {
+    searchForm.onsubmit = (e) => {
+      e.preventDefault();
+      searchInput.blur();
+    };
+  }
 }
 
-function updateImageUploadUI(isSelected, fileName = '') {
-    const defaultIcon = document.getElementById('default-upload-icon');
-    const confirmedIcon = document.getElementById('confirmed-upload-icon');
-    const uploadText = document.getElementById('upload-text');
-    const container = document.getElementById('image-upload-container');
+function updateImageUploadUI(isSelected, fileName = "") {
+  const defaultIcon = document.getElementById("default-upload-icon");
+  const confirmedIcon = document.getElementById("confirmed-upload-icon");
+  const uploadText = document.getElementById("upload-text");
+  const container = document.getElementById("image-upload-container");
 
-    if (isSelected) {
-        defaultIcon.classList.add('hidden');
-        confirmedIcon.classList.remove('hidden');
-        uploadText.textContent = 'Image Ready';
-        uploadText.classList.replace('text-gray-600', 'text-green-600');
-        container.classList.replace('border-gray-100', 'border-green-100');
-        container.classList.add('bg-green-50/30');
-    } else {
-        defaultIcon.classList.remove('hidden');
-        confirmedIcon.classList.add('hidden');
-        uploadText.textContent = 'Upload Image';
-        uploadText.classList.replace('text-green-600', 'text-gray-600');
-        container.classList.replace('border-green-100', 'border-gray-100');
-        container.classList.remove('bg-green-50/30');
-    }
+  if (isSelected) {
+    defaultIcon.classList.add("hidden");
+    confirmedIcon.classList.remove("hidden");
+    uploadText.textContent = "Image Ready";
+    uploadText.classList.replace("text-gray-600", "text-green-600");
+    container.classList.replace("border-gray-100", "border-green-100");
+    container.classList.add("bg-green-50/30");
+  } else {
+    defaultIcon.classList.remove("hidden");
+    confirmedIcon.classList.add("hidden");
+    uploadText.textContent = "Upload Image";
+    uploadText.classList.replace("text-green-600", "text-gray-600");
+    container.classList.replace("border-green-100", "border-gray-100");
+    container.classList.remove("bg-green-50/30");
+  }
 }
 
-function updateCategoryImageUploadUI(isSelected, fileName = '') {
-    const defaultIcon = document.getElementById('cat-default-upload-icon');
-    const confirmedIcon = document.getElementById('cat-confirmed-upload-icon');
-    const uploadText = document.getElementById('cat-upload-text');
-    const container = document.getElementById('cat-image-upload-container');
+function updateCategoryImageUploadUI(isSelected, fileName = "") {
+  const defaultIcon = document.getElementById("cat-default-upload-icon");
+  const confirmedIcon = document.getElementById("cat-confirmed-upload-icon");
+  const uploadText = document.getElementById("cat-upload-text");
+  const container = document.getElementById("cat-image-upload-container");
 
-    if (isSelected) {
-        defaultIcon.classList.add('hidden');
-        confirmedIcon.classList.remove('hidden');
-        uploadText.textContent = 'Image Ready';
-        uploadText.classList.replace('text-gray-500', 'text-green-600');
-        container.classList.replace('border-gray-100', 'border-green-100');
-        container.classList.add('bg-green-50/30');
-    } else {
-        defaultIcon.classList.remove('hidden');
-        confirmedIcon.classList.add('hidden');
-        uploadText.textContent = 'Upload Image';
-        uploadText.classList.replace('text-green-600', 'text-gray-500');
-        container.classList.replace('border-green-100', 'border-gray-100');
-        container.classList.remove('bg-green-50/30');
-    }
+  if (isSelected) {
+    defaultIcon.classList.add("hidden");
+    confirmedIcon.classList.remove("hidden");
+    uploadText.textContent = "Image Ready";
+    uploadText.classList.replace("text-gray-500", "text-green-600");
+    container.classList.replace("border-gray-100", "border-green-100");
+    container.classList.add("bg-green-50/30");
+  } else {
+    defaultIcon.classList.remove("hidden");
+    confirmedIcon.classList.add("hidden");
+    uploadText.textContent = "Upload Image";
+    uploadText.classList.replace("text-green-600", "text-gray-500");
+    container.classList.replace("border-green-100", "border-gray-100");
+    container.classList.remove("bg-green-50/30");
+  }
 }
 
 async function fetchData() {
-    // Fetch categories — only the columns we use (added image_url)
-    const { data: categories, error: catError } = await supabase
-        .from('categories')
-        .select('id, name_en, name_so, image_url')
-        .order('name_en');
+  // Fetch categories — only the columns we use (added image_url)
+  const { data: categories, error: catError } = await supabase
+    .from("categories")
+    .select("id, name_en, name_so, image_url")
+    .order("name_en");
 
-    if (catError) console.error('Error fetching categories:', catError);
-    state.categories = categories || [];
+  if (catError) console.error("Error fetching categories:", catError);
+  state.categories = categories || [];
 
-    // Fetch menu items — only the columns we use
-    const { data: items, error: itemError } = await supabase
-        .from('menu_items')
-        .select('id, name_en, name_so, category_id, price, image_url, description_en, description_so, is_popular, rating, prep_time, created_at')
-        .order('created_at', { ascending: false });
+  // Fetch menu items — only the columns we use
+  const { data: items, error: itemError } = await supabase
+    .from("menu_items")
+    .select(
+      "id, name_en, name_so, category_id, price, image_url, description_en, description_so, is_popular, rating, prep_time, created_at",
+    )
+    .order("created_at", { ascending: false });
 
-    if (itemError) console.error('Error fetching items:', itemError);
+  if (itemError) console.error("Error fetching items:", itemError);
 
-    state.menuData = (items || []).map(item => ({
-        id: item.id,
-        name: { en: item.name_en, so: item.name_so },
-        category: item.category_id,
-        price: item.price,
-        image: item.image_url,
-        description: { en: item.description_en, so: item.description_so },
-        isPopular: item.is_popular,
-        rating: item.rating,
-        prepTime: item.prep_time
-    }));
+  state.menuData = (items || []).map((item) => ({
+    id: item.id,
+    name: { en: item.name_en, so: item.name_so },
+    category: item.category_id,
+    price: item.price,
+    image: item.image_url,
+    description: { en: item.description_en, so: item.description_so },
+    isPopular: item.is_popular,
+    rating: item.rating,
+    prepTime: item.prep_time,
+  }));
 
-    renderDashboard();
+  renderDashboard();
 }
 
 function renderDashboard() {
-    renderItemList();
-    renderCategorySelect();
-    renderCategoryListAdmin();
-    updateStats();
+  renderItemList();
+  renderCategorySelect();
+  renderCategoryListAdmin();
+  updateStats();
 }
 
 function updateStats() {
-    document.getElementById('total-items').textContent = state.menuData.length;
-    document.getElementById('total-categories').textContent = state.categories.length;
+  document.getElementById("total-items").textContent = state.menuData.length;
+  document.getElementById("total-categories").textContent =
+    state.categories.length;
 }
 
 // --- Authentication ---
 window.handleLogin = async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('admin-email').value;
-    const password = document.getElementById('admin-password').value;
-    const errorEl = document.getElementById('login-error');
+  e.preventDefault();
+  const email = document.getElementById("admin-email").value;
+  const password = document.getElementById("admin-password").value;
+  const errorEl = document.getElementById("login-error");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (error) {
-        errorEl.textContent = error.message;
-        errorEl.classList.remove('hidden');
-    } else {
-        errorEl.classList.add('hidden');
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        await fetchData();
-    }
+  if (error) {
+    errorEl.textContent = error.message;
+    errorEl.classList.remove("hidden");
+  } else {
+    errorEl.classList.add("hidden");
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    await fetchData();
+  }
 };
 
 window.handleLogout = async () => {
-    await supabase.auth.signOut();
-    location.reload();
+  await supabase.auth.signOut();
+  location.reload();
 };
 
 // --- UI Rendering ---
 function renderCategorySelect() {
-    const select = document.getElementById('category');
-    select.innerHTML = state.categories
-        .map(c => `<option value="${c.id}">${c.name_en}</option>`)
-        .join('');
+  const select = document.getElementById("category");
+  select.innerHTML = state.categories
+    .map((c) => `<option value="${c.id}">${c.name_en}</option>`)
+    .join("");
 }
 
 function renderCategoryListAdmin() {
-    const list = document.getElementById('category-list-admin');
-    list.innerHTML = state.categories.map(c => `
+  const list = document.getElementById("category-list-admin");
+  list.innerHTML = state.categories
+    .map(
+      (c) => `
         <div class="flex items-center justify-between p-4 sm:p-5 bg-white border border-gray-100 rounded-2xl hover:shadow-md transition-shadow group">
             <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                 <div class="relative w-10 h-10 rounded-xl overflow-hidden bg-gray-100 shadow-sm ring-1 ring-black/5 shrink-0">
-                    <img src="${c.image_url || 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=120&h=120&q=80'}" class="w-full h-full object-cover">
+                    <img src="${c.image_url || "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=120&h=120&q=80"}" class="w-full h-full object-cover">
                 </div>
                 <div class="min-w-0">
                     <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">${c.name_en}</div>
@@ -233,12 +275,16 @@ function renderCategoryListAdmin() {
                 </svg>
             </button>
         </div>
-    `).join('');
+    `,
+    )
+    .join("");
 }
 
 window.renderItemList = (items = state.menuData) => {
-    const list = document.getElementById('item-list');
-    list.innerHTML = items.map(item => `
+  const list = document.getElementById("item-list");
+  list.innerHTML = items
+    .map(
+      (item) => `
         <tr class="group hover:bg-gray-50/80 transition-colors">
             <td class="px-8 py-5">
                 <div class="flex items-center gap-4">
@@ -275,285 +321,247 @@ window.renderItemList = (items = state.menuData) => {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `,
+    )
+    .join("");
 };
 
 window.filterAdminItems = () => {
-    const q = document.getElementById('admin-search').value.toLowerCase();
-    const filtered = state.menuData.filter(item =>
-        item.name.en.toLowerCase().includes(q) ||
-        item.name.so.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
-    );
-    renderItemList(filtered);
+  const q = document.getElementById("admin-search").value.toLowerCase();
+  const filtered = state.menuData.filter(
+    (item) =>
+      item.name.en.toLowerCase().includes(q) ||
+      item.name.so.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q),
+  );
+  renderItemList(filtered);
 };
 
 // --- CRUD Operations ---
 window.openModal = (id = null) => {
-    const modal = document.getElementById('item-modal');
-    const form = document.getElementById('item-form');
-    const title = document.getElementById('modal-title');
+  const modal = document.getElementById("item-modal");
+  const form = document.getElementById("item-form");
+  const title = document.getElementById("modal-title");
 
-    form.reset();
-    document.getElementById('edit-id').value = id || '';
+  form.reset();
+  document.getElementById("edit-id").value = id || "";
 
-    if (id) {
-        const item = state.menuData.find(i => i.id === id);
-        title.textContent = 'Edit Item';
-        document.getElementById('name-en').value = item.name.en;
-        document.getElementById('name-so').value = item.name.so;
-        document.getElementById('price').value = item.price;
-        document.getElementById('category').value = item.category;
-        document.getElementById('image-url').value = item.image;
-        document.getElementById('prep-time').value = item.prepTime;
-        document.getElementById('rating').value = item.rating;
-        document.getElementById('desc-en').value = item.description.en;
-        document.getElementById('desc-so').value = item.description.so;
-    } else {
-        title.textContent = 'Add New Item';
-    }
+  if (id) {
+    const item = state.menuData.find((i) => i.id === id);
+    title.textContent = "Edit Item";
+    document.getElementById("name-en").value = item.name.en;
+    document.getElementById("name-so").value = item.name.so;
+    document.getElementById("price").value = item.price;
+    document.getElementById("category").value = item.category;
+    document.getElementById("image-url").value = item.image;
+    document.getElementById("prep-time").value = item.prepTime;
+    document.getElementById("rating").value = item.rating;
+    document.getElementById("desc-en").value = item.description.en;
+    document.getElementById("desc-so").value = item.description.so;
+  } else {
+    title.textContent = "Add New Item";
+  }
 
-    // Reset Image Upload UI
-    updateImageUploadUI(false);
+  // Reset Image Upload UI
+  updateImageUploadUI(false);
 
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
 };
 
 window.closeModal = () => {
-    const modal = document.getElementById('item-modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+  const modal = document.getElementById("item-modal");
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
 };
 
 window.handleSaveItem = async (e) => {
-    e.preventDefault();
-    const saveBtn = document.getElementById('save-btn');
-    const originalText = saveBtn.textContent;
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
+  e.preventDefault();
+  const saveBtn = document.getElementById("save-btn");
+  const originalText = saveBtn.textContent;
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
 
-    const id = document.getElementById('edit-id').value;
-    const imageFile = document.getElementById('image-file').files[0];
-    let imageUrl = document.getElementById('image-url').value;
+  const id = document.getElementById("edit-id").value;
+  const imageFile = document.getElementById("image-file").files[0];
+  let imageUrl = document.getElementById("image-url").value;
 
-    try {
-        // Handle Image Upload (Cloudflare R2)
-        if (imageFile) {
-            const fileName = `${Date.now()}_${imageFile.name.replace(/\s+/g, '_')}`;
-
-            const formData = new FormData();
-            formData.append('file', imageFile);
-            formData.append('filename', fileName);
-
-            const response = await fetch(CF_WORKER_URL, {
-                method: 'POST',
-                headers: {
-                    'X-Auth-Token': CF_AUTH_SECRET
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Upload failed: ${errorText}`);
-            }
-
-            const uploadData = await response.json();
-            imageUrl = uploadData.url;
-        }
-
-        const itemData = {
-            name_en: document.getElementById('name-en').value,
-            name_so: document.getElementById('name-so').value,
-            category_id: document.getElementById('category').value,
-            price: parseFloat(document.getElementById('price').value),
-            image_url: imageUrl,
-            prep_time: document.getElementById('prep-time').value,
-            rating: parseFloat(document.getElementById('rating').value),
-            description_en: document.getElementById('desc-en').value,
-            description_so: document.getElementById('desc-so').value
-        };
-
-        if (id) {
-            // UPDATE: patch local state optimistically, no full re-fetch
-            const { error } = await supabase
-                .from('menu_items')
-                .update(itemData)
-                .eq('id', id);
-            if (error) throw error;
-
-            const idx = state.menuData.findIndex(i => String(i.id) === String(id));
-            if (idx > -1) {
-                state.menuData[idx] = {
-                    ...state.menuData[idx],
-                    name: { en: itemData.name_en, so: itemData.name_so },
-                    category: itemData.category_id,
-                    price: itemData.price,
-                    image: itemData.image_url,
-                    description: { en: itemData.description_en, so: itemData.description_so },
-                    rating: itemData.rating,
-                    prepTime: itemData.prep_time
-                };
-            }
-            bustMenuCache(); // Invalidate public menu cache
-            closeModal();
-            renderDashboard();
-        } else {
-            // INSERT: must re-fetch to get the server-assigned ID
-            const { error } = await supabase
-                .from('menu_items')
-                .insert([itemData]);
-            if (error) throw error;
-            bustMenuCache(); // Invalidate public menu cache
-            closeModal();
-            await fetchData();
-        }
-    } catch (err) {
-        alert('Error saving item: ' + err.message);
-    } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = originalText;
+  try {
+    // Handle Image Upload (Cloudflare R2)
+    if (imageFile) {
+      const fileName = `${Date.now()}_${imageFile.name.replace(/\s+/g, "_")}`;
+      imageUrl = await uploadImage(imageFile, fileName);
     }
+
+    const itemData = {
+      name_en: document.getElementById("name-en").value,
+      name_so: document.getElementById("name-so").value,
+      category_id: document.getElementById("category").value,
+      price: parseFloat(document.getElementById("price").value),
+      image_url: imageUrl,
+      prep_time: document.getElementById("prep-time").value,
+      rating: parseFloat(document.getElementById("rating").value),
+      description_en: document.getElementById("desc-en").value,
+      description_so: document.getElementById("desc-so").value,
+    };
+
+    if (id) {
+      // UPDATE: patch local state optimistically, no full re-fetch
+      const { error } = await supabase
+        .from("menu_items")
+        .update(itemData)
+        .eq("id", id);
+      if (error) throw error;
+
+      const idx = state.menuData.findIndex((i) => String(i.id) === String(id));
+      if (idx > -1) {
+        state.menuData[idx] = {
+          ...state.menuData[idx],
+          name: { en: itemData.name_en, so: itemData.name_so },
+          category: itemData.category_id,
+          price: itemData.price,
+          image: itemData.image_url,
+          description: {
+            en: itemData.description_en,
+            so: itemData.description_so,
+          },
+          rating: itemData.rating,
+          prepTime: itemData.prep_time,
+        };
+      }
+      bustMenuCache(); // Invalidate public menu cache
+      closeModal();
+      renderDashboard();
+    } else {
+      // INSERT: must re-fetch to get the server-assigned ID
+      const { error } = await supabase.from("menu_items").insert([itemData]);
+      if (error) throw error;
+      bustMenuCache(); // Invalidate public menu cache
+      closeModal();
+      await fetchData();
+    }
+  } catch (err) {
+    alert("Error saving item: " + err.message);
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = originalText;
+  }
 };
 
 window.deleteItem = async (id) => {
-    if (confirm('Are you sure you want to delete this item?')) {
-        const { error } = await supabase
-            .from('menu_items')
-            .delete()
-            .eq('id', id);
+  if (confirm("Are you sure you want to delete this item?")) {
+    const { error } = await supabase.from("menu_items").delete().eq("id", id);
 
-        if (error) {
-            alert('Error deleting item: ' + error.message);
-        } else {
-            // Optimistic: remove from local state, no full re-fetch needed
-            state.menuData = state.menuData.filter(i => String(i.id) !== String(id));
-            bustMenuCache(); // Invalidate public menu cache
-            renderDashboard();
-        }
+    if (error) {
+      alert("Error deleting item: " + error.message);
+    } else {
+      // Optimistic: remove from local state, no full re-fetch needed
+      state.menuData = state.menuData.filter(
+        (i) => String(i.id) !== String(id),
+      );
+      bustMenuCache(); // Invalidate public menu cache
+      renderDashboard();
     }
+  }
 };
 
 window.editItem = (id) => {
-    openModal(id);
+  openModal(id);
 };
 
 // --- Category Management ---
 window.openCategoryModal = () => {
-    document.getElementById('category-modal').classList.remove('hidden');
-    document.getElementById('category-modal').classList.add('flex');
+  document.getElementById("category-modal").classList.remove("hidden");
+  document.getElementById("category-modal").classList.add("flex");
 };
 
 window.closeCategoryModal = () => {
-    document.getElementById('category-modal').classList.add('hidden');
-    document.getElementById('category-modal').classList.remove('flex');
+  document.getElementById("category-modal").classList.add("hidden");
+  document.getElementById("category-modal").classList.remove("flex");
 };
 
 window.handleAddCategory = async (e) => {
-    e.preventDefault();
-    const saveBtn = document.getElementById('cat-save-btn');
-    const originalText = saveBtn.textContent;
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
+  e.preventDefault();
+  const saveBtn = document.getElementById("cat-save-btn");
+  const originalText = saveBtn.textContent;
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
 
-    const id = document.getElementById('new-cat-id').value.trim();
-    const name_en = document.getElementById('new-cat-en').value.trim();
-    const name_so = document.getElementById('new-cat-so').value.trim();
-    const imageFile = document.getElementById('cat-image-file').files[0];
-    let imageUrl = document.getElementById('new-cat-image-url').value.trim();
+  const id = document.getElementById("new-cat-id").value.trim();
+  const name_en = document.getElementById("new-cat-en").value.trim();
+  const name_so = document.getElementById("new-cat-so").value.trim();
+  const imageFile = document.getElementById("cat-image-file").files[0];
+  let imageUrl = document.getElementById("new-cat-image-url").value.trim();
 
-    try {
-        // Handle Image Upload (Cloudflare R2)
-        if (imageFile) {
-            const fileName = `${Date.now()}_cat_${imageFile.name.replace(/\s+/g, '_')}`;
-
-            const formData = new FormData();
-            formData.append('file', imageFile);
-            formData.append('filename', fileName);
-
-            const response = await fetch(CF_WORKER_URL, {
-                method: 'POST',
-                headers: {
-                    'X-Auth-Token': CF_AUTH_SECRET
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Upload failed: ${errorText}`);
-            }
-
-            const uploadData = await response.json();
-            imageUrl = uploadData.url;
-        }
-
-        const { error } = await supabase
-            .from('categories')
-            .insert([{ id, name_en, name_so, image_url: imageUrl }]);
-
-        if (error) throw error;
-
-        // Reset form
-        document.getElementById('new-cat-id').value = '';
-        document.getElementById('new-cat-en').value = '';
-        document.getElementById('new-cat-so').value = '';
-        document.getElementById('cat-image-file').value = '';
-        document.getElementById('new-cat-image-url').value = '';
-        updateCategoryImageUploadUI(false);
-
-        // Optimistic: push to local state, no full re-fetch needed
-        state.categories.push({ id, name_en, name_so, image_url: imageUrl });
-        bustMenuCache(); // Invalidate public menu cache
-        renderDashboard();
-    } catch (err) {
-        alert('Error adding category: ' + err.message);
-    } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = originalText;
+  try {
+    // Handle Image Upload (Cloudflare R2)
+    if (imageFile) {
+      const fileName = `${Date.now()}_cat_${imageFile.name.replace(/\s+/g, "_")}`;
+      imageUrl = await uploadImage(imageFile, fileName);
     }
+
+    const { error } = await supabase
+      .from("categories")
+      .insert([{ id, name_en, name_so, image_url: imageUrl }]);
+
+    if (error) throw error;
+
+    // Reset form
+    document.getElementById("new-cat-id").value = "";
+    document.getElementById("new-cat-en").value = "";
+    document.getElementById("new-cat-so").value = "";
+    document.getElementById("cat-image-file").value = "";
+    document.getElementById("new-cat-image-url").value = "";
+    updateCategoryImageUploadUI(false);
+
+    // Optimistic: push to local state, no full re-fetch needed
+    state.categories.push({ id, name_en, name_so, image_url: imageUrl });
+    bustMenuCache(); // Invalidate public menu cache
+    renderDashboard();
+  } catch (err) {
+    alert("Error adding category: " + err.message);
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = originalText;
+  }
 };
 
 window.handleDeleteCategory = async (id) => {
-    if (confirm('Are you sure? This may affect items in this category.')) {
-        const { error } = await supabase
-            .from('categories')
-            .delete()
-            .eq('id', id);
+  if (confirm("Are you sure? This may affect items in this category.")) {
+    const { error } = await supabase.from("categories").delete().eq("id", id);
 
-        if (error) {
-            alert('Error deleting category: ' + error.message);
-        } else {
-            // Optimistic: remove from local state, no full re-fetch needed
-            state.categories = state.categories.filter(c => c.id !== id);
-            bustMenuCache(); // Invalidate public menu cache
-            renderDashboard();
-        }
+    if (error) {
+      alert("Error deleting category: " + error.message);
+    } else {
+      // Optimistic: remove from local state, no full re-fetch needed
+      state.categories = state.categories.filter((c) => c.id !== id);
+      bustMenuCache(); // Invalidate public menu cache
+      renderDashboard();
     }
+  }
 };
 
 // --- Mobile Navigation ---
 window.toggleMobileMenu = () => {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
-    const menuIcon = document.getElementById('menu-icon');
-    const closeIcon = document.getElementById('close-icon');
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  const menuIcon = document.getElementById("menu-icon");
+  const closeIcon = document.getElementById("close-icon");
 
-    const isOpen = !sidebar.classList.contains('-translate-x-full');
+  const isOpen = !sidebar.classList.contains("-translate-x-full");
 
-    if (isOpen) {
-        sidebar.classList.add('-translate-x-full');
-        backdrop.classList.add('hidden');
-        menuIcon.classList.remove('hidden');
-        closeIcon.classList.add('hidden');
-    } else {
-        sidebar.classList.remove('-translate-x-full');
-        backdrop.classList.remove('hidden');
-        menuIcon.classList.add('hidden');
-        closeIcon.classList.remove('hidden');
-    }
+  if (isOpen) {
+    sidebar.classList.add("-translate-x-full");
+    backdrop.classList.add("hidden");
+    menuIcon.classList.remove("hidden");
+    closeIcon.classList.add("hidden");
+  } else {
+    sidebar.classList.remove("-translate-x-full");
+    backdrop.classList.remove("hidden");
+    menuIcon.classList.add("hidden");
+    closeIcon.classList.remove("hidden");
+  }
 };
 
 // Start initialization
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener("DOMContentLoaded", init);

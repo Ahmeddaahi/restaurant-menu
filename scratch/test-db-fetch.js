@@ -1,15 +1,16 @@
 async function run() {
-  const url = 'https://yrsthptcicraywyzlrfc.supabase.co/rest/v1/categories?limit=1';
-  const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlyc3RocHRjaWNyYXl3eXpscmZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NDc0MzgsImV4cCI6MjA5MjUyMzQzOH0.aIXHyA0j20gwIMi5XXhupiYDcan2tWkJq4D_WMjaWC0';
-  
+  const url =
+    "https://ezfcqeavtbbigakszruk.supabase.co/rest/v1/categories?limit=1";
+  const anonKey = "sb_publishable_oIbZPQzDmTm2yRe7DRWXqg_ofoijtu3";
+
   const res = await fetch(url, {
     headers: {
-      'apikey': anonKey,
-      'Authorization': `Bearer ${anonKey}`
-    }
+      apikey: anonKey,
+      Authorization: `Bearer ${anonKey}`,
+    },
   });
-  
+
   const data = await res.json();
-  console.log('Categories row:', JSON.stringify(data));
+  console.log("Categories row:", JSON.stringify(data));
 }
 run();
